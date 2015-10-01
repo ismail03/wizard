@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 
 <project name="me2-archival-portlet" basedir="." default="deploy">
-	<import file="../build-common-portlet.xml" />
+			<import file="../build-common-portlet.xml" />
 </project>
