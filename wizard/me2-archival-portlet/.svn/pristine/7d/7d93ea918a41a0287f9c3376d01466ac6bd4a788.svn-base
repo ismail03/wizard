@@ -1,0 +1,13 @@
+Newsroom=on
+Applications=off
+Departments=off
+Initiatives=off
+Conferences=off
+archival-year=1
+expired-week=3
+deleted-month=3
+expired-week-invalidemail=6
+merlin-inbox=sandipm.patel@cignex.com
+monitor-scheduler-id=monitorarchive
+solr-batch=50
+default.remainder.mail.subject=Archival of your content - [$CONTENT_NAME$]

@@ -1,0 +1,382 @@
+/**
+ * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.ihg.me2.archive.service.model;
+
+import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.model.impl.BaseModelImpl;
+
+import java.io.Serializable;
+
+import java.lang.reflect.Proxy;
+
+import java.util.Date;
+
+/**
+ * @author Sandip Patel
+ */
+public class ArchiveContentClp extends BaseModelImpl<ArchiveContent>
+	implements ArchiveContent {
+	public ArchiveContentClp() {
+	}
+
+	public String getPrimaryKey() {
+		return _content_id;
+	}
+
+	public void setPrimaryKey(String pk) {
+		setContent_id(pk);
+	}
+
+	public Serializable getPrimaryKeyObj() {
+		return _content_id;
+	}
+
+	public String getContent_id() {
+		return _content_id;
+	}
+
+	public void setContent_id(String content_id) {
+		_content_id = content_id;
+	}
+
+	public String getContent_type() {
+		return _content_type;
+	}
+
+	public void setContent_type(String content_type) {
+		_content_type = content_type;
+	}
+
+	public String getContent_name() {
+		return _content_name;
+	}
+
+	public void setContent_name(String content_name) {
+		_content_name = content_name;
+	}
+
+	public long getGroupId() {
+		return _groupId;
+	}
+
+	public void setGroupId(long groupId) {
+		_groupId = groupId;
+	}
+
+	public Date getModified_date() {
+		return _modified_date;
+	}
+
+	public void setModified_date(Date modified_date) {
+		_modified_date = modified_date;
+	}
+
+	public String getAuthor_name() {
+		return _author_name;
+	}
+
+	public void setAuthor_name(String author_name) {
+		_author_name = author_name;
+	}
+
+	public String getAuthor_email() {
+		return _author_email;
+	}
+
+	public void setAuthor_email(String author_email) {
+		_author_email = author_email;
+	}
+
+	public Date getNotified_date() {
+		return _notified_date;
+	}
+
+	public void setNotified_date(Date notified_date) {
+		_notified_date = notified_date;
+	}
+
+	public String getStatus() {
+		return _status;
+	}
+
+	public void setStatus(String status) {
+		_status = status;
+	}
+
+	public Date getExpired_date() {
+		return _expired_date;
+	}
+
+	public void setExpired_date(Date expired_date) {
+		_expired_date = expired_date;
+	}
+
+	public Date getDeleted_date() {
+		return _deleted_date;
+	}
+
+	public void setDeleted_date(Date deleted_date) {
+		_deleted_date = deleted_date;
+	}
+
+	public String getContent_url() {
+		return _content_url;
+	}
+
+	public void setContent_url(String content_url) {
+		_content_url = content_url;
+	}
+
+	public Date getCreate_datetime() {
+		return _create_datetime;
+	}
+
+	public void setCreate_datetime(Date create_datetime) {
+		_create_datetime = create_datetime;
+	}
+
+	public String getCreated_by() {
+		return _created_by;
+	}
+
+	public void setCreated_by(String created_by) {
+		_created_by = created_by;
+	}
+
+	public Date getUpdate_datetime() {
+		return _update_datetime;
+	}
+
+	public void setUpdate_datetime(Date update_datetime) {
+		_update_datetime = update_datetime;
+	}
+
+	public String getUpdated_by() {
+		return _updated_by;
+	}
+
+	public void setUpdated_by(String updated_by) {
+		_updated_by = updated_by;
+	}
+
+	public ArchiveContent toEscapedModel() {
+		if (isEscapedModel()) {
+			return this;
+		}
+		else {
+			return (ArchiveContent)Proxy.newProxyInstance(ArchiveContent.class.getClassLoader(),
+				new Class[] { ArchiveContent.class },
+				new AutoEscapeBeanHandler(this));
+		}
+	}
+
+	public Object clone() {
+		ArchiveContentClp clone = new ArchiveContentClp();
+
+		clone.setContent_id(getContent_id());
+		clone.setContent_type(getContent_type());
+		clone.setContent_name(getContent_name());
+		clone.setGroupId(getGroupId());
+		clone.setModified_date(getModified_date());
+		clone.setAuthor_name(getAuthor_name());
+		clone.setAuthor_email(getAuthor_email());
+		clone.setNotified_date(getNotified_date());
+		clone.setStatus(getStatus());
+		clone.setExpired_date(getExpired_date());
+		clone.setDeleted_date(getDeleted_date());
+		clone.setContent_url(getContent_url());
+		clone.setCreate_datetime(getCreate_datetime());
+		clone.setCreated_by(getCreated_by());
+		clone.setUpdate_datetime(getUpdate_datetime());
+		clone.setUpdated_by(getUpdated_by());
+
+		return clone;
+	}
+
+	public int compareTo(ArchiveContent archiveContent) {
+		int value = 0;
+
+		value = getContent_name().compareTo(archiveContent.getContent_name());
+
+		if (value != 0) {
+			return value;
+		}
+
+		return 0;
+	}
+
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+
+		ArchiveContentClp archiveContent = null;
+
+		try {
+			archiveContent = (ArchiveContentClp)obj;
+		}
+		catch (ClassCastException cce) {
+			return false;
+		}
+
+		String pk = archiveContent.getPrimaryKey();
+
+		if (getPrimaryKey().equals(pk)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public int hashCode() {
+		return getPrimaryKey().hashCode();
+	}
+
+	public String toString() {
+		StringBundler sb = new StringBundler(33);
+
+		sb.append("{content_id=");
+		sb.append(getContent_id());
+		sb.append(", content_type=");
+		sb.append(getContent_type());
+		sb.append(", content_name=");
+		sb.append(getContent_name());
+		sb.append(", groupId=");
+		sb.append(getGroupId());
+		sb.append(", modified_date=");
+		sb.append(getModified_date());
+		sb.append(", author_name=");
+		sb.append(getAuthor_name());
+		sb.append(", author_email=");
+		sb.append(getAuthor_email());
+		sb.append(", notified_date=");
+		sb.append(getNotified_date());
+		sb.append(", status=");
+		sb.append(getStatus());
+		sb.append(", expired_date=");
+		sb.append(getExpired_date());
+		sb.append(", deleted_date=");
+		sb.append(getDeleted_date());
+		sb.append(", content_url=");
+		sb.append(getContent_url());
+		sb.append(", create_datetime=");
+		sb.append(getCreate_datetime());
+		sb.append(", created_by=");
+		sb.append(getCreated_by());
+		sb.append(", update_datetime=");
+		sb.append(getUpdate_datetime());
+		sb.append(", updated_by=");
+		sb.append(getUpdated_by());
+		sb.append("}");
+
+		return sb.toString();
+	}
+
+	public String toXmlString() {
+		StringBundler sb = new StringBundler(52);
+
+		sb.append("<model><model-name>");
+		sb.append("com.ihg.me2.archive.service.model.ArchiveContent");
+		sb.append("</model-name>");
+
+		sb.append(
+			"<column><column-name>content_id</column-name><column-value><![CDATA[");
+		sb.append(getContent_id());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>content_type</column-name><column-value><![CDATA[");
+		sb.append(getContent_type());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>content_name</column-name><column-value><![CDATA[");
+		sb.append(getContent_name());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>groupId</column-name><column-value><![CDATA[");
+		sb.append(getGroupId());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>modified_date</column-name><column-value><![CDATA[");
+		sb.append(getModified_date());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>author_name</column-name><column-value><![CDATA[");
+		sb.append(getAuthor_name());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>author_email</column-name><column-value><![CDATA[");
+		sb.append(getAuthor_email());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>notified_date</column-name><column-value><![CDATA[");
+		sb.append(getNotified_date());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>status</column-name><column-value><![CDATA[");
+		sb.append(getStatus());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>expired_date</column-name><column-value><![CDATA[");
+		sb.append(getExpired_date());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>deleted_date</column-name><column-value><![CDATA[");
+		sb.append(getDeleted_date());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>content_url</column-name><column-value><![CDATA[");
+		sb.append(getContent_url());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>create_datetime</column-name><column-value><![CDATA[");
+		sb.append(getCreate_datetime());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>created_by</column-name><column-value><![CDATA[");
+		sb.append(getCreated_by());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>update_datetime</column-name><column-value><![CDATA[");
+		sb.append(getUpdate_datetime());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>updated_by</column-name><column-value><![CDATA[");
+		sb.append(getUpdated_by());
+		sb.append("]]></column-value></column>");
+
+		sb.append("</model>");
+
+		return sb.toString();
+	}
+
+	private String _content_id;
+	private String _content_type;
+	private String _content_name;
+	private long _groupId;
+	private Date _modified_date;
+	private String _author_name;
+	private String _author_email;
+	private Date _notified_date;
+	private String _status;
+	private Date _expired_date;
+	private Date _deleted_date;
+	private String _content_url;
+	private Date _create_datetime;
+	private String _created_by;
+	private Date _update_datetime;
+	private String _updated_by;
+}

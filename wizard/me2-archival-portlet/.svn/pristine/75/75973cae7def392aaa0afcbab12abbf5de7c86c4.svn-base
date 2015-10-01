@@ -1,0 +1,375 @@
+/**
+ * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.ihg.me2.archive.service.service;
+
+import com.ihg.me2.archive.service.model.ArchiveContentClp;
+
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.model.BaseModel;
+
+import java.lang.reflect.Method;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * @author Brian Wing Shun Chan
+ */
+public class ClpSerializer {
+	public static final String SERVLET_CONTEXT_NAME = "me2-archival-portlet";
+
+	public static void setClassLoader(ClassLoader classLoader) {
+		_classLoader = classLoader;
+	}
+
+	public static Object translateInput(BaseModel<?> oldModel) {
+		Class<?> oldModelClass = oldModel.getClass();
+
+		String oldModelClassName = oldModelClass.getName();
+
+		if (oldModelClassName.equals(ArchiveContentClp.class.getName())) {
+			ArchiveContentClp oldCplModel = (ArchiveContentClp)oldModel;
+
+			ClassLoader contextClassLoader = Thread.currentThread()
+												   .getContextClassLoader();
+
+			try {
+				Thread.currentThread().setContextClassLoader(_classLoader);
+
+				try {
+					Class<?> newModelClass = Class.forName("com.ihg.me2.archive.service.model.impl.ArchiveContentImpl",
+							true, _classLoader);
+
+					Object newModel = newModelClass.newInstance();
+
+					Method method0 = newModelClass.getMethod("setContent_id",
+							new Class[] { String.class });
+
+					String value0 = oldCplModel.getContent_id();
+
+					method0.invoke(newModel, value0);
+
+					Method method1 = newModelClass.getMethod("setContent_type",
+							new Class[] { String.class });
+
+					String value1 = oldCplModel.getContent_type();
+
+					method1.invoke(newModel, value1);
+
+					Method method2 = newModelClass.getMethod("setContent_name",
+							new Class[] { String.class });
+
+					String value2 = oldCplModel.getContent_name();
+
+					method2.invoke(newModel, value2);
+
+					Method method3 = newModelClass.getMethod("setGroupId",
+							new Class[] { Long.TYPE });
+
+					Long value3 = new Long(oldCplModel.getGroupId());
+
+					method3.invoke(newModel, value3);
+
+					Method method4 = newModelClass.getMethod("setModified_date",
+							new Class[] { Date.class });
+
+					Date value4 = oldCplModel.getModified_date();
+
+					method4.invoke(newModel, value4);
+
+					Method method5 = newModelClass.getMethod("setAuthor_name",
+							new Class[] { String.class });
+
+					String value5 = oldCplModel.getAuthor_name();
+
+					method5.invoke(newModel, value5);
+
+					Method method6 = newModelClass.getMethod("setAuthor_email",
+							new Class[] { String.class });
+
+					String value6 = oldCplModel.getAuthor_email();
+
+					method6.invoke(newModel, value6);
+
+					Method method7 = newModelClass.getMethod("setNotified_date",
+							new Class[] { Date.class });
+
+					Date value7 = oldCplModel.getNotified_date();
+
+					method7.invoke(newModel, value7);
+
+					Method method8 = newModelClass.getMethod("setStatus",
+							new Class[] { String.class });
+
+					String value8 = oldCplModel.getStatus();
+
+					method8.invoke(newModel, value8);
+
+					Method method9 = newModelClass.getMethod("setExpired_date",
+							new Class[] { Date.class });
+
+					Date value9 = oldCplModel.getExpired_date();
+
+					method9.invoke(newModel, value9);
+
+					Method method10 = newModelClass.getMethod("setDeleted_date",
+							new Class[] { Date.class });
+
+					Date value10 = oldCplModel.getDeleted_date();
+
+					method10.invoke(newModel, value10);
+
+					Method method11 = newModelClass.getMethod("setContent_url",
+							new Class[] { String.class });
+
+					String value11 = oldCplModel.getContent_url();
+
+					method11.invoke(newModel, value11);
+
+					Method method12 = newModelClass.getMethod("setCreate_datetime",
+							new Class[] { Date.class });
+
+					Date value12 = oldCplModel.getCreate_datetime();
+
+					method12.invoke(newModel, value12);
+
+					Method method13 = newModelClass.getMethod("setCreated_by",
+							new Class[] { String.class });
+
+					String value13 = oldCplModel.getCreated_by();
+
+					method13.invoke(newModel, value13);
+
+					Method method14 = newModelClass.getMethod("setUpdate_datetime",
+							new Class[] { Date.class });
+
+					Date value14 = oldCplModel.getUpdate_datetime();
+
+					method14.invoke(newModel, value14);
+
+					Method method15 = newModelClass.getMethod("setUpdated_by",
+							new Class[] { String.class });
+
+					String value15 = oldCplModel.getUpdated_by();
+
+					method15.invoke(newModel, value15);
+
+					return newModel;
+				}
+				catch (Exception e) {
+					_log.error(e, e);
+				}
+			}
+			finally {
+				Thread.currentThread().setContextClassLoader(contextClassLoader);
+			}
+		}
+
+		return oldModel;
+	}
+
+	public static Object translateInput(List<Object> oldList) {
+		List<Object> newList = new ArrayList<Object>(oldList.size());
+
+		for (int i = 0; i < oldList.size(); i++) {
+			Object curObj = oldList.get(i);
+
+			newList.add(translateInput(curObj));
+		}
+
+		return newList;
+	}
+
+	public static Object translateInput(Object obj) {
+		if (obj instanceof BaseModel<?>) {
+			return translateInput((BaseModel<?>)obj);
+		}
+		else if (obj instanceof List<?>) {
+			return translateInput((List<Object>)obj);
+		}
+		else {
+			return obj;
+		}
+	}
+
+	public static Object translateOutput(BaseModel<?> oldModel) {
+		Class<?> oldModelClass = oldModel.getClass();
+
+		String oldModelClassName = oldModelClass.getName();
+
+		if (oldModelClassName.equals(
+					"com.ihg.me2.archive.service.model.impl.ArchiveContentImpl")) {
+			ClassLoader contextClassLoader = Thread.currentThread()
+												   .getContextClassLoader();
+
+			try {
+				Thread.currentThread().setContextClassLoader(_classLoader);
+
+				try {
+					ArchiveContentClp newModel = new ArchiveContentClp();
+
+					Method method0 = oldModelClass.getMethod("getContent_id");
+
+					String value0 = (String)method0.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setContent_id(value0);
+
+					Method method1 = oldModelClass.getMethod("getContent_type");
+
+					String value1 = (String)method1.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setContent_type(value1);
+
+					Method method2 = oldModelClass.getMethod("getContent_name");
+
+					String value2 = (String)method2.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setContent_name(value2);
+
+					Method method3 = oldModelClass.getMethod("getGroupId");
+
+					Long value3 = (Long)method3.invoke(oldModel, (Object[])null);
+
+					newModel.setGroupId(value3);
+
+					Method method4 = oldModelClass.getMethod("getModified_date");
+
+					Date value4 = (Date)method4.invoke(oldModel, (Object[])null);
+
+					newModel.setModified_date(value4);
+
+					Method method5 = oldModelClass.getMethod("getAuthor_name");
+
+					String value5 = (String)method5.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setAuthor_name(value5);
+
+					Method method6 = oldModelClass.getMethod("getAuthor_email");
+
+					String value6 = (String)method6.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setAuthor_email(value6);
+
+					Method method7 = oldModelClass.getMethod("getNotified_date");
+
+					Date value7 = (Date)method7.invoke(oldModel, (Object[])null);
+
+					newModel.setNotified_date(value7);
+
+					Method method8 = oldModelClass.getMethod("getStatus");
+
+					String value8 = (String)method8.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setStatus(value8);
+
+					Method method9 = oldModelClass.getMethod("getExpired_date");
+
+					Date value9 = (Date)method9.invoke(oldModel, (Object[])null);
+
+					newModel.setExpired_date(value9);
+
+					Method method10 = oldModelClass.getMethod("getDeleted_date");
+
+					Date value10 = (Date)method10.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setDeleted_date(value10);
+
+					Method method11 = oldModelClass.getMethod("getContent_url");
+
+					String value11 = (String)method11.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setContent_url(value11);
+
+					Method method12 = oldModelClass.getMethod(
+							"getCreate_datetime");
+
+					Date value12 = (Date)method12.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setCreate_datetime(value12);
+
+					Method method13 = oldModelClass.getMethod("getCreated_by");
+
+					String value13 = (String)method13.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setCreated_by(value13);
+
+					Method method14 = oldModelClass.getMethod(
+							"getUpdate_datetime");
+
+					Date value14 = (Date)method14.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setUpdate_datetime(value14);
+
+					Method method15 = oldModelClass.getMethod("getUpdated_by");
+
+					String value15 = (String)method15.invoke(oldModel,
+							(Object[])null);
+
+					newModel.setUpdated_by(value15);
+
+					return newModel;
+				}
+				catch (Exception e) {
+					_log.error(e, e);
+				}
+			}
+			finally {
+				Thread.currentThread().setContextClassLoader(contextClassLoader);
+			}
+		}
+
+		return oldModel;
+	}
+
+	public static Object translateOutput(List<Object> oldList) {
+		List<Object> newList = new ArrayList<Object>(oldList.size());
+
+		for (int i = 0; i < oldList.size(); i++) {
+			Object curObj = oldList.get(i);
+
+			newList.add(translateOutput(curObj));
+		}
+
+		return newList;
+	}
+
+	public static Object translateOutput(Object obj) {
+		if (obj instanceof BaseModel<?>) {
+			return translateOutput((BaseModel<?>)obj);
+		}
+		else if (obj instanceof List<?>) {
+			return translateOutput((List<Object>)obj);
+		}
+		else {
+			return obj;
+		}
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(ClpSerializer.class);
+	private static ClassLoader _classLoader;
+}

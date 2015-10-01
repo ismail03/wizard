@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!DOCTYPE liferay-portlet-app PUBLIC "-//Liferay//DTD Portlet Application 6.0.0//EN" "http://www.liferay.com/dtd/liferay-portlet-app_6_0_0.dtd">
+
+<liferay-portlet-app>
+	<portlet>
+		<portlet-name>me2-archival</portlet-name>
+		<icon>/icon.png</icon>
+		<instanceable>true</instanceable>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<footer-portlet-javascript>/js/main.js</footer-portlet-javascript>
+		<css-class-wrapper>me2-archival-portlet</css-class-wrapper>
+	</portlet>
+	<portlet>
+		<portlet-name>me2-ArchivalMonitor</portlet-name>
+		<icon>/icon.png</icon>
+		<scheduler-entry>
+			<scheduler-description>test-scheduler</scheduler-description>
+			<scheduler-event-listener-class>com.ihg.me2.archive.scheduler.ArchivalMonitorScheduler</scheduler-event-listener-class>
+			<trigger>
+				 <simple>  
+			         <simple-trigger-value>10</simple-trigger-value>  
+			         <time-unit>minute</time-unit>  
+		         </simple>
+				 <!-- <cron>
+					<cron-trigger-value>0 53 13 ? * MON-FRI *</cron-trigger-value>
+				 </cron> -->
+			</trigger>
+		</scheduler-entry>
+		<instanceable>true</instanceable>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<footer-portlet-javascript>
+			/js/main.js
+		</footer-portlet-javascript>
+		<css-class-wrapper>
+			me2-archivalmonitor-portlet
+		</css-class-wrapper>
+	</portlet>
+	<portlet>
+		<portlet-name>expirescheduler</portlet-name>
+		<icon>/icon.png</icon>
+		<scheduler-entry>
+			<scheduler-description>test-scheduler</scheduler-description>
+			<scheduler-event-listener-class> com.ihg.me2.achive.deletescheduler.DeleteJobScheduler</scheduler-event-listener-class>
+			<trigger>
+				 <simple>  
+			         <simple-trigger-value>10</simple-trigger-value>  
+			         <time-unit>minute</time-unit>  
+		         </simple>
+				 <!-- <cron>
+					<cron-trigger-value>0 53 13 ? * MON-FRI *</cron-trigger-value>
+				 </cron> -->
+			</trigger>
+		</scheduler-entry>
+		<instanceable>true</instanceable>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<footer-portlet-javascript>
+			/js/main.js
+		</footer-portlet-javascript>
+		<css-class-wrapper>expirescheduler-portlet</css-class-wrapper>
+	</portlet>
+	<portlet>
+		<portlet-name>deletescheduler</portlet-name>
+		<icon>/icon.png</icon>
+		<scheduler-entry>
+			<scheduler-description>test-scheduler</scheduler-description>
+			<scheduler-event-listener-class> com.ihg.me2.achive.deletescheduler.DeleteJobScheduler</scheduler-event-listener-class>
+			<trigger>
+				 <simple>  
+			         <simple-trigger-value>10</simple-trigger-value>  
+			         <time-unit>minute</time-unit>  
+		         </simple>
+				 <!-- <cron>
+					<cron-trigger-value>0 53 13 ? * MON-FRI *</cron-trigger-value>
+				 </cron> -->
+			</trigger>
+		</scheduler-entry>
+		<instanceable>true</instanceable>
+		<header-portlet-css>/css/main.css</header-portlet-css>
+		<footer-portlet-javascript>
+			/js/main.js
+		</footer-portlet-javascript>
+		<css-class-wrapper>deletescheduler-portlet</css-class-wrapper>
+	</portlet>
+	<role-mapper>
+		<role-name>administrator</role-name>
+		<role-link>Administrator</role-link>
+	</role-mapper>
+	<role-mapper>
+		<role-name>guest</role-name>
+		<role-link>Guest</role-link>
+	</role-mapper>
+	<role-mapper>
+		<role-name>power-user</role-name>
+		<role-link>Power User</role-link>
+	</role-mapper>
+	<role-mapper>
+		<role-name>user</role-name>
+		<role-link>User</role-link>
+	</role-mapper>
+</liferay-portlet-app>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 6.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_6_0_0.dtd">
+<service-builder package-path="com.ihg.me2.archive.service">
+	<author>Sandip Patel</author>
+	<namespace>archive</namespace>
+	<entity name="ArchiveContent" table="archive_content" uuid="false" local-service="true" remote-service="true"
+		data-source="archiveDataSource" tx-manager="archiveTxManager">
+
+		<!-- PK fields -->
+		<column name="content_id" type="String" primary="true" />
+		<!-- <column name="content_id" type="String" /> -->
+
+		<!-- Audit fields -->
+
+		<column name="content_type" type="String" />
+		<column name="content_name" type="String"  />
+		<column name="groupId" type="long" />
+		<column name="modified_date" type="Date" />
+		<column name="author_name" type="String" convert-null="false" />
+		<column name="author_email" type="String" />
+		<column name="notified_date" type="Date" />
+		<column name="status" type="String" />
+		<column name="expired_date" type="Date" />
+		<column name="deleted_date" type="Date" />
+		<column name="content_url" type="String" />
+		<column name="create_datetime" type="Date" />
+		<column name="created_by" type="String" />
+		<column name="update_datetime" type="Date" />
+		<column name="updated_by" type="String" />
+		
+		<!-- Order -->
+		<order by="asc">
+			<order-column name="content_name" />
+		</order>
+
+	</entity>
+</service-builder>

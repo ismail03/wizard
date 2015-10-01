@@ -1,0 +1,254 @@
+package com.ihg.me2.archive.deletescheduler;
+
+import com.ihg.me2.archive.deleteutil.DeleteSchedulerUtil;
+import com.ihg.me2.archive.deleteutil.IndexerLogger;
+import com.ihg.me2.archive.deleteutil.SchedulerConstant;
+import com.ihg.me2.archive.service.model.ArchiveContent;
+import com.ihg.me2.archive.service.service.ArchiveContentLocalServiceUtil;
+
+import com.liferay.portal.kernel.dao.orm.Criterion;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.messaging.Message;
+import com.liferay.portal.kernel.messaging.MessageListener;
+import com.liferay.portal.kernel.messaging.MessageListenerException;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.util.portlet.PortletProps;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+
+import org.apache.log4j.Logger;
+
+public class DeleteJobScheduler implements MessageListener {
+	private static Logger logger = IndexerLogger
+			.getLogger(DeleteJobScheduler.class);
+	public static List<ArchiveContent> webcontents = null;
+	public static List<ArchiveContent> media = null;
+	public static List<ArchiveContent> communities = null;
+
+	public DeleteJobScheduler() {
+		webcontents = new ArrayList<ArchiveContent>();
+		media = new ArrayList<ArchiveContent>();
+		communities = new ArrayList<ArchiveContent>();
+	}
+
+	
+	public void receive(Message arg0) throws MessageListenerException {
+
+				int frequency = Integer.parseInt(PortletProps.get("deleted-month"));
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+		try {
+			
+			Date today = dateFormat.parse(dateFormat.format(new Date()));
+			Calendar c = Calendar.getInstance();
+			c.setTime(today);
+			c.add(Calendar.MONTH, -frequency);
+
+			DynamicQuery dynamicQuery = DynamicQueryFactoryUtil
+					.forClass(ArchiveContent.class);
+			Criterion criterion = null;
+			criterion = RestrictionsFactoryUtil.eq("status",
+					SchedulerConstant.STATUS_EXPIRED);
+
+			criterion = RestrictionsFactoryUtil.and(criterion,
+					RestrictionsFactoryUtil.between("deleted_date",
+							c.getTime(), today));
+
+			dynamicQuery.add(criterion);
+
+			List<ArchiveContent> deleteable = ArchiveContentLocalServiceUtil
+					.dynamicQuery(dynamicQuery);
+
+			logger.info(deleteable.size()
+					+ " records found that needs to be archived");
+
+			if (Validator.isNotNull(deleteable) && deleteable.size() > 0) {
+
+				seperation(deleteable);
+				logger.info("separation is performed");
+				if (webcontents.size() > 0) {
+					processWebContent();
+					logger.info("Webcontents are processed");
+				}
+				if (media.size() > 0) {
+					processMedia();
+					logger.info("documents,images,vedios are processed");
+				}
+				if (communities.size() > 0) {
+					processCommunity();
+					logger.info("communities are processed");
+				}
+
+			} else {
+
+				logger.info("there are no records found for delete archival between date "
+						+ c.getTime().toString() + " and " + today.toString());
+
+			}
+
+		} catch (ParseException e) {
+			logger.error("Error occured while parsing the date", e);
+		} catch (SystemException e) {
+			logger.error("Error ocuured while Executing the Query", e);
+		}
+
+	}
+
+	public void seperation(List<ArchiveContent> deletable) {
+		if (deletable == null || deletable.size() == 0) {
+			throw new IllegalArgumentException();
+		}
+
+		for (ArchiveContent a : deletable) {
+			if (DeleteSchedulerUtil.isWebContent(a.getContent_type())) {
+				webcontents.add(a);
+				continue;
+			}
+
+			if (DeleteSchedulerUtil.isMedia(a.getContent_type())) {
+				media.add(a);
+				continue;
+			}
+			if (DeleteSchedulerUtil.isCommunity(a.getContent_type())) {
+				communities.add(a);
+				continue;
+			}
+		}
+
+	}
+
+	public void processWebContent() throws NumberFormatException {
+		if (webcontents == null || webcontents.size() == 0) {
+			throw new IllegalArgumentException();
+		}
+		for (ArchiveContent a : webcontents) {
+			a.setModified_date(DeleteSchedulerUtil.getModifiedDate(
+					SchedulerConstant.WEBCONTENT_IDENTIFIER,
+					Long.parseLong(a.getContent_id())));
+			a.setUpdate_datetime(new Date());
+			DeleteSchedulerUtil.updateArchive(a);
+			if (DeleteSchedulerUtil.isModifiedInExpiredStatus(
+					Long.parseLong(a.getContent_id()), a.getStatus(),
+					a.getExpired_date(), a.getDeleted_date(),
+					SchedulerConstant.WEBCONTENT_IDENTIFIER)) {
+				// action is taken by the user
+				
+				DeleteSchedulerUtil.deleteFromArchiveContent(a.getContent_id()); // delete
+																					// from
+																					// archive
+				// update the in list status, so that is useful while community
+				a.setStatus(SchedulerConstant.STATUS_UPDATE);
+
+			} else if (DeleteSchedulerUtil.flag == 2) {
+				// content is not modified in expired period
+				if (DeleteSchedulerUtil.deleteWebContentFromPortal(Long
+						.parseLong(a.getContent_id()))) {
+					a.setStatus(SchedulerConstant.STATUS_DELETE);
+					DeleteSchedulerUtil.updateArchive(a);
+				}
+
+			} else if (DeleteSchedulerUtil.flag == 1) {
+				// content is deleted by user or admin
+				a.setStatus(SchedulerConstant.STATUS_DELETED_FROM_PORTAL);
+				DeleteSchedulerUtil.updateArchive(a);
+			}
+
+			
+		}
+	}
+
+	public void processMedia() throws NumberFormatException {
+		if (media == null || media.size() == 0) {
+			throw new IllegalArgumentException();
+		}
+
+		for (ArchiveContent a : media) {
+			// set modified in the Archive content
+			a.setModified_date(DeleteSchedulerUtil.getModifiedDate(
+					SchedulerConstant.MEDIA_IDENTIFIER,
+					Long.parseLong(a.getContent_id())));
+			a.setUpdate_datetime(new Date());
+			DeleteSchedulerUtil.updateArchive(a);
+			if (DeleteSchedulerUtil.isModifiedInExpiredStatus(
+					Long.parseLong(a.getContent_id()), a.getStatus(),
+					a.getExpired_date(), a.getDeleted_date(),
+					SchedulerConstant.MEDIA_IDENTIFIER)) {
+				// action is taken by the author
+				DeleteSchedulerUtil.removeExpiredTag(a,
+						SchedulerConstant.MEDIA_IDENTIFIER);
+				DeleteSchedulerUtil.deleteFromArchiveContent(a.getContent_id());
+				a.setStatus(SchedulerConstant.STATUS_UPDATE);
+
+			} else if (DeleteSchedulerUtil.flag == 2) {
+				// content is not modified in expired period
+				if (DeleteSchedulerUtil.deleteMediaFromPortal(Long.parseLong(a
+						.getContent_id()))) {
+					a.setStatus(SchedulerConstant.STATUS_DELETE);
+					a.setDeleted_date(new Date());
+					DeleteSchedulerUtil.updateArchive(a);
+				}
+			} else if (DeleteSchedulerUtil.flag == 1) {
+				// content is deleted by user or admin ,in expired status
+				a.setStatus(SchedulerConstant.STATUS_DELETED_FROM_PORTAL);
+				DeleteSchedulerUtil.updateArchive(a);
+			}
+
+			DeleteSchedulerUtil.flag = 0;
+			
+			
+		}
+
+	}
+
+	public void processCommunity() {
+		if (communities == null || communities.size() == 0) {
+			throw new IllegalArgumentException();
+		}
+
+		for (ArchiveContent a : communities) {
+			List<ArchiveContent> communitywebcontents = DeleteSchedulerUtil
+					.getCommuntiyWebcontent(webcontents,
+							Long.parseLong(a.getContent_id()));
+
+			List<ArchiveContent> communitymedia = DeleteSchedulerUtil
+					.getCommuntiyWebcontent(media,
+							Long.parseLong(a.getContent_id()));
+
+			if (DeleteSchedulerUtil
+					.isAnyWebContentUpdated(communitywebcontents)
+					|| DeleteSchedulerUtil.isAnyMediaUpdated(communitymedia)) {
+				a.setStatus("active");
+				// send mail to owner
+				DeleteSchedulerUtil.removeExpiredTag(a, SchedulerConstant.COMMUNITY_IDENTIFIER);
+				continue;
+			} else {
+
+				try {
+					GroupLocalServiceUtil.deleteGroup(a.getGroupId());
+				} catch (PortalException e) {
+					// TODO Auto-generated catch block
+					logger.error("Communtiy cannot be deleted "
+							+ a.getGroupId());
+					e.printStackTrace();
+				} catch (SystemException e) {
+
+					logger.error("Error occured while communicating with database");
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+	}
+
+}

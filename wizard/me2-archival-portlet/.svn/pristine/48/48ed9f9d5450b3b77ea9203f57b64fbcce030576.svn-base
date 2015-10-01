@@ -1,0 +1,32 @@
+package com.ihg.me2.archive.util;
+
+import java.util.Calendar;
+import java.util.Date;
+
+public class ArchivalMonitorUtil {
+	
+	private ArchivalMonitorUtil(){
+		
+	}
+	/**
+	 * This function will returning one year before toDate. and if toDate is 
+	 * null then it will returning one year before current Date. 
+	 * @param date
+	 */
+	public static Date getOneYearBeforeDate(Date toDate) {
+	    Calendar cal = Calendar.getInstance();
+	    Date targetDate;
+	    if(null!=toDate)
+	    	cal.setTime(toDate);
+	    System.out.println("Today : " + cal.getTime());
+
+	    // Substract 1 year from the calendar
+	    cal.add(Calendar.YEAR, -1);
+	    targetDate = cal.getTime();
+	    System.out.println("1 year ago: " + targetDate);
+	    
+	    return targetDate;
+	}
+	
+	
+}

@@ -1,0 +1,249 @@
+/**
+ * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.ihg.me2.archive.service.model;
+
+import java.io.Serializable;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * <p>
+ * This class is used by
+ * {@link com.ihg.me2.archive.service.service.http.ArchiveContentServiceSoap}.
+ * </p>
+ *
+ * @author    Sandip Patel
+ * @see       com.ihg.me2.archive.service.service.http.ArchiveContentServiceSoap
+ * @generated
+ */
+public class ArchiveContentSoap implements Serializable {
+	public static ArchiveContentSoap toSoapModel(ArchiveContent model) {
+		ArchiveContentSoap soapModel = new ArchiveContentSoap();
+
+		soapModel.setContent_id(model.getContent_id());
+		soapModel.setContent_type(model.getContent_type());
+		soapModel.setContent_name(model.getContent_name());
+		soapModel.setGroupId(model.getGroupId());
+		soapModel.setModified_date(model.getModified_date());
+		soapModel.setAuthor_name(model.getAuthor_name());
+		soapModel.setAuthor_email(model.getAuthor_email());
+		soapModel.setNotified_date(model.getNotified_date());
+		soapModel.setStatus(model.getStatus());
+		soapModel.setExpired_date(model.getExpired_date());
+		soapModel.setDeleted_date(model.getDeleted_date());
+		soapModel.setContent_url(model.getContent_url());
+		soapModel.setCreate_datetime(model.getCreate_datetime());
+		soapModel.setCreated_by(model.getCreated_by());
+		soapModel.setUpdate_datetime(model.getUpdate_datetime());
+		soapModel.setUpdated_by(model.getUpdated_by());
+
+		return soapModel;
+	}
+
+	public static ArchiveContentSoap[] toSoapModels(ArchiveContent[] models) {
+		ArchiveContentSoap[] soapModels = new ArchiveContentSoap[models.length];
+
+		for (int i = 0; i < models.length; i++) {
+			soapModels[i] = toSoapModel(models[i]);
+		}
+
+		return soapModels;
+	}
+
+	public static ArchiveContentSoap[][] toSoapModels(ArchiveContent[][] models) {
+		ArchiveContentSoap[][] soapModels = null;
+
+		if (models.length > 0) {
+			soapModels = new ArchiveContentSoap[models.length][models[0].length];
+		}
+		else {
+			soapModels = new ArchiveContentSoap[0][0];
+		}
+
+		for (int i = 0; i < models.length; i++) {
+			soapModels[i] = toSoapModels(models[i]);
+		}
+
+		return soapModels;
+	}
+
+	public static ArchiveContentSoap[] toSoapModels(List<ArchiveContent> models) {
+		List<ArchiveContentSoap> soapModels = new ArrayList<ArchiveContentSoap>(models.size());
+
+		for (ArchiveContent model : models) {
+			soapModels.add(toSoapModel(model));
+		}
+
+		return soapModels.toArray(new ArchiveContentSoap[soapModels.size()]);
+	}
+
+	public ArchiveContentSoap() {
+	}
+
+	public String getPrimaryKey() {
+		return _content_id;
+	}
+
+	public void setPrimaryKey(String pk) {
+		setContent_id(pk);
+	}
+
+	public String getContent_id() {
+		return _content_id;
+	}
+
+	public void setContent_id(String content_id) {
+		_content_id = content_id;
+	}
+
+	public String getContent_type() {
+		return _content_type;
+	}
+
+	public void setContent_type(String content_type) {
+		_content_type = content_type;
+	}
+
+	public String getContent_name() {
+		return _content_name;
+	}
+
+	public void setContent_name(String content_name) {
+		_content_name = content_name;
+	}
+
+	public long getGroupId() {
+		return _groupId;
+	}
+
+	public void setGroupId(long groupId) {
+		_groupId = groupId;
+	}
+
+	public Date getModified_date() {
+		return _modified_date;
+	}
+
+	public void setModified_date(Date modified_date) {
+		_modified_date = modified_date;
+	}
+
+	public String getAuthor_name() {
+		return _author_name;
+	}
+
+	public void setAuthor_name(String author_name) {
+		_author_name = author_name;
+	}
+
+	public String getAuthor_email() {
+		return _author_email;
+	}
+
+	public void setAuthor_email(String author_email) {
+		_author_email = author_email;
+	}
+
+	public Date getNotified_date() {
+		return _notified_date;
+	}
+
+	public void setNotified_date(Date notified_date) {
+		_notified_date = notified_date;
+	}
+
+	public String getStatus() {
+		return _status;
+	}
+
+	public void setStatus(String status) {
+		_status = status;
+	}
+
+	public Date getExpired_date() {
+		return _expired_date;
+	}
+
+	public void setExpired_date(Date expired_date) {
+		_expired_date = expired_date;
+	}
+
+	public Date getDeleted_date() {
+		return _deleted_date;
+	}
+
+	public void setDeleted_date(Date deleted_date) {
+		_deleted_date = deleted_date;
+	}
+
+	public String getContent_url() {
+		return _content_url;
+	}
+
+	public void setContent_url(String content_url) {
+		_content_url = content_url;
+	}
+
+	public Date getCreate_datetime() {
+		return _create_datetime;
+	}
+
+	public void setCreate_datetime(Date create_datetime) {
+		_create_datetime = create_datetime;
+	}
+
+	public String getCreated_by() {
+		return _created_by;
+	}
+
+	public void setCreated_by(String created_by) {
+		_created_by = created_by;
+	}
+
+	public Date getUpdate_datetime() {
+		return _update_datetime;
+	}
+
+	public void setUpdate_datetime(Date update_datetime) {
+		_update_datetime = update_datetime;
+	}
+
+	public String getUpdated_by() {
+		return _updated_by;
+	}
+
+	public void setUpdated_by(String updated_by) {
+		_updated_by = updated_by;
+	}
+
+	private String _content_id;
+	private String _content_type;
+	private String _content_name;
+	private long _groupId;
+	private Date _modified_date;
+	private String _author_name;
+	private String _author_email;
+	private Date _notified_date;
+	private String _status;
+	private Date _expired_date;
+	private Date _deleted_date;
+	private String _content_url;
+	private Date _create_datetime;
+	private String _created_by;
+	private Date _update_datetime;
+	private String _updated_by;
+}

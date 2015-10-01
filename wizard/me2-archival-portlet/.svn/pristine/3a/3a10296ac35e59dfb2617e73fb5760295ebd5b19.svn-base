@@ -1,0 +1,26 @@
+package com.ihg.me2.archive.deleteutil;
+
+public interface SchedulerConstant {
+
+	String[] WEBCONTENTS = { "apps", "dept_hot_topics", "Init_hot_topics",
+			"Conf_news", "news" };
+	String[] DOC_IMAGE_VEDIO = { "dept_resource", "tms_resource",
+			"init_resource", "conf_resource", "news_resource" };
+
+	String[] COMMUNITIES = { "teamspace", "conference", "initiative" };
+	String MAIL_TMPL_PATH = "com/ihg/me2/archive/deleteutil/mail.tmpl";
+
+	String PROPERTIES_PATH = "com/ihg/me2/archive/deleteutil/portlet.properties";
+	String[] DONT_SEND_MAIL_COMPONENTS = { "News", "news_resource" };
+	String STATUS_EXPIRED = "expired";
+	String STATUS_UPDATE = "updated";
+	String STATUS_DELETE = "deleted";
+	String STATUS_DELETED_FROM_PORTAL = "DeletedFromPortal";
+
+	String DEFAULT_REMAINDER_MAIL_SUBJECT = "default.remainder.mail.subject";
+	String DEFAULT_SENDER_INBOX = "merlin-inbox";
+
+	String WEBCONTENT_IDENTIFIER = "webcontent";
+	String MEDIA_IDENTIFIER = "media";
+	String COMMUNITY_IDENTIFIER="community";
+}

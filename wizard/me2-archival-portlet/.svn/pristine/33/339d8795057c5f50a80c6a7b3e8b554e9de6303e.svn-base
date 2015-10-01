@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd">
+	<persistence-unit-metadata>
+		<xml-mapping-metadata-complete/>
+		<persistence-unit-defaults>
+			<access>PROPERTY</access>
+		</persistence-unit-defaults>
+	</persistence-unit-metadata>
+	<mapped-superclass class="com.ihg.me2.archive.service.model.impl.ArchiveContentModelImpl">
+		<attributes>
+			<id name="content_id" />
+			<basic name="content_type" />
+			<basic name="content_name" />
+			<basic name="groupId" />
+			<basic name="modified_date">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="author_name" />
+			<basic name="author_email" />
+			<basic name="notified_date">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="status" />
+			<basic name="expired_date">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="deleted_date">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="content_url" />
+			<basic name="create_datetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="created_by" />
+			<basic name="update_datetime">
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="updated_by" />
+			<transient name="primaryKey" />
+		</attributes>
+	</mapped-superclass>
+	<entity class="com.ihg.me2.archive.service.model.impl.ArchiveContentImpl" name="ArchiveContent">
+		<table name="archive_content" />
+		<attributes />
+	</entity>
+</entity-mappings>

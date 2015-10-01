@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.ihg.me2.archive.service.model.ArchiveContent">
+		<field name="CONTENT_ID" type="String">
+			<hint name="max-length">50</hint>
+		</field>
+		<field name="CONTENT_TYP" type="String">
+			<hint name="max-length">30</hint>
+		</field>
+		<field name="CONTENT_NM" type="String">
+			<hint name="max-length">200</hint>
+		</field>
+		<field name="GRP_ID" type="long" />
+		<field name="AUTHOR_EMAIL_ID" type="String">
+			<hint name="max-length">100</hint>
+		</field>
+		<field name="AUTHOR_NM" type="String">
+			<hint name="max-length">30</hint>
+		</field>
+		<field name="CONTENT_URL_TXT" type="String">
+			<hint name="max-length">50</hint>
+		</field>
+		<field name="CONTENT_STAT_CD" type="String">
+			<hint name="max-length">20</hint>
+		</field>
+		<field name="CONTENT_STAT_MOD_DT" type="Date" />
+		<field name="CONTENT_STAT_NOTIFIED_DT" type="Date" />
+		<field name="CONTENT_STAT_EXPIRED_DT" type="Date" />
+		<field name="CONTENT_STAT_DEL_DT" type="Date" />
+		<field name="CREAT_USR_ID" type="String">
+			<hint name="max-length">50</hint>
+		</field>
+		<field name="CREAT_TS" type="Date" />
+		<field name="LST_UPDT_USR_ID" type="String">
+			<hint name="max-length">50</hint>
+		</field>
+		<field name="LST_UPDT_TS" type="Date" />
+	</model>
+</model-hints>

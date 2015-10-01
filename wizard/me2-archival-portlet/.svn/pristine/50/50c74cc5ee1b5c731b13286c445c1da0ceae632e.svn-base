@@ -1,0 +1,20 @@
+package com.ihg.me2.archive.expireutil;
+
+public class SchedulerConstant {
+
+	public static final String[] webContents = { "News", "apps",
+			"dept_hot_topics", "Init_hot_topics", "Conf_news" };
+
+	public static final String[] documents = { "news_resource",
+			"dept_resource", "Init_resource", "Conf_resource" };
+
+	public static final String[] communities = { "initiative", "conference" };
+
+	public static final String Notified = "Notified";
+	public static final String Expired = "Expired";
+	public static final String Updated = "Updated";
+	public static final String DeletedFromPortal = "DeletedFromPortal";
+
+	public static final String PropertyFilePate = "/com/ihg/resource.properties";
+
+}

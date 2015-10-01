@@ -1,0 +1,292 @@
+/**
+ * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.ihg.me2.archive.service.service.persistence;
+
+import com.ihg.me2.archive.service.model.ArchiveContent;
+
+import com.liferay.portal.kernel.bean.PortletBeanLocatorUtil;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.ReferenceRegistry;
+import com.liferay.portal.service.ServiceContext;
+
+import java.util.List;
+
+/**
+ * The persistence utility for the archive content service. This utility wraps {@link ArchiveContentPersistenceImpl} and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
+ *
+ * <p>
+ * Caching information and settings can be found in <code>portal.properties</code>
+ * </p>
+ *
+ * @author Sandip Patel
+ * @see ArchiveContentPersistence
+ * @see ArchiveContentPersistenceImpl
+ * @generated
+ */
+public class ArchiveContentUtil {
+	/*
+	 * NOTE FOR DEVELOPERS:
+	 *
+	 * Never modify this class directly. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
+	 */
+
+	/**
+	 * @see com.liferay.portal.service.persistence.BasePersistence#clearCache()
+	 */
+	public static void clearCache() {
+		getPersistence().clearCache();
+	}
+
+	/**
+	 * @see com.liferay.portal.service.persistence.BasePersistence#clearCache(com.liferay.portal.model.BaseModel)
+	 */
+	public static void clearCache(ArchiveContent archiveContent) {
+		getPersistence().clearCache(archiveContent);
+	}
+
+	/**
+	 * @see com.liferay.portal.service.persistence.BasePersistence#countWithDynamicQuery(DynamicQuery)
+	 */
+	public long countWithDynamicQuery(DynamicQuery dynamicQuery)
+		throws SystemException {
+		return getPersistence().countWithDynamicQuery(dynamicQuery);
+	}
+
+	/**
+	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
+	 */
+	public static List<ArchiveContent> findWithDynamicQuery(
+		DynamicQuery dynamicQuery) throws SystemException {
+		return getPersistence().findWithDynamicQuery(dynamicQuery);
+	}
+
+	/**
+	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int)
+	 */
+	public static List<ArchiveContent> findWithDynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end)
+		throws SystemException {
+		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
+	}
+
+	/**
+	 * @see com.liferay.portal.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery, int, int, OrderByComparator)
+	 */
+	public static List<ArchiveContent> findWithDynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
+		return getPersistence()
+				   .findWithDynamicQuery(dynamicQuery, start, end,
+			orderByComparator);
+	}
+
+	/**
+	 * @see com.liferay.portal.service.persistence.BasePersistence#remove(com.liferay.portal.model.BaseModel)
+	 */
+	public static ArchiveContent remove(ArchiveContent archiveContent)
+		throws SystemException {
+		return getPersistence().remove(archiveContent);
+	}
+
+	/**
+	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean)
+	 */
+	public static ArchiveContent update(ArchiveContent archiveContent,
+		boolean merge) throws SystemException {
+		return getPersistence().update(archiveContent, merge);
+	}
+
+	/**
+	 * @see com.liferay.portal.service.persistence.BasePersistence#update(com.liferay.portal.model.BaseModel, boolean, ServiceContext)
+	 */
+	public static ArchiveContent update(ArchiveContent archiveContent,
+		boolean merge, ServiceContext serviceContext) throws SystemException {
+		return getPersistence().update(archiveContent, merge, serviceContext);
+	}
+
+	/**
+	* Caches the archive content in the entity cache if it is enabled.
+	*
+	* @param archiveContent the archive content to cache
+	*/
+	public static void cacheResult(
+		com.ihg.me2.archive.service.model.ArchiveContent archiveContent) {
+		getPersistence().cacheResult(archiveContent);
+	}
+
+	/**
+	* Caches the archive contents in the entity cache if it is enabled.
+	*
+	* @param archiveContents the archive contents to cache
+	*/
+	public static void cacheResult(
+		java.util.List<com.ihg.me2.archive.service.model.ArchiveContent> archiveContents) {
+		getPersistence().cacheResult(archiveContents);
+	}
+
+	/**
+	* Creates a new archive content with the primary key. Does not add the archive content to the database.
+	*
+	* @param content_id the primary key for the new archive content
+	* @return the new archive content
+	*/
+	public static com.ihg.me2.archive.service.model.ArchiveContent create(
+		java.lang.String content_id) {
+		return getPersistence().create(content_id);
+	}
+
+	/**
+	* Removes the archive content with the primary key from the database. Also notifies the appropriate model listeners.
+	*
+	* @param content_id the primary key of the archive content to remove
+	* @return the archive content that was removed
+	* @throws com.ihg.me2.archive.service.NoSuchArchiveContentException if a archive content with the primary key could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.ihg.me2.archive.service.model.ArchiveContent remove(
+		java.lang.String content_id)
+		throws com.ihg.me2.archive.service.NoSuchArchiveContentException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().remove(content_id);
+	}
+
+	public static com.ihg.me2.archive.service.model.ArchiveContent updateImpl(
+		com.ihg.me2.archive.service.model.ArchiveContent archiveContent,
+		boolean merge)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().updateImpl(archiveContent, merge);
+	}
+
+	/**
+	* Finds the archive content with the primary key or throws a {@link com.ihg.me2.archive.service.NoSuchArchiveContentException} if it could not be found.
+	*
+	* @param content_id the primary key of the archive content to find
+	* @return the archive content
+	* @throws com.ihg.me2.archive.service.NoSuchArchiveContentException if a archive content with the primary key could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.ihg.me2.archive.service.model.ArchiveContent findByPrimaryKey(
+		java.lang.String content_id)
+		throws com.ihg.me2.archive.service.NoSuchArchiveContentException,
+			com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().findByPrimaryKey(content_id);
+	}
+
+	/**
+	* Finds the archive content with the primary key or returns <code>null</code> if it could not be found.
+	*
+	* @param content_id the primary key of the archive content to find
+	* @return the archive content, or <code>null</code> if a archive content with the primary key could not be found
+	* @throws SystemException if a system exception occurred
+	*/
+	public static com.ihg.me2.archive.service.model.ArchiveContent fetchByPrimaryKey(
+		java.lang.String content_id)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().fetchByPrimaryKey(content_id);
+	}
+
+	/**
+	* Finds all the archive contents.
+	*
+	* @return the archive contents
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.ihg.me2.archive.service.model.ArchiveContent> findAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().findAll();
+	}
+
+	/**
+	* Finds a range of all the archive contents.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
+	* </p>
+	*
+	* @param start the lower bound of the range of archive contents to return
+	* @param end the upper bound of the range of archive contents to return (not inclusive)
+	* @return the range of archive contents
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.ihg.me2.archive.service.model.ArchiveContent> findAll(
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().findAll(start, end);
+	}
+
+	/**
+	* Finds an ordered range of all the archive contents.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
+	* </p>
+	*
+	* @param start the lower bound of the range of archive contents to return
+	* @param end the upper bound of the range of archive contents to return (not inclusive)
+	* @param orderByComparator the comparator to order the results by
+	* @return the ordered range of archive contents
+	* @throws SystemException if a system exception occurred
+	*/
+	public static java.util.List<com.ihg.me2.archive.service.model.ArchiveContent> findAll(
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator orderByComparator)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().findAll(start, end, orderByComparator);
+	}
+
+	/**
+	* Removes all the archive contents from the database.
+	*
+	* @throws SystemException if a system exception occurred
+	*/
+	public static void removeAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		getPersistence().removeAll();
+	}
+
+	/**
+	* Counts all the archive contents.
+	*
+	* @return the number of archive contents
+	* @throws SystemException if a system exception occurred
+	*/
+	public static int countAll()
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getPersistence().countAll();
+	}
+
+	public static ArchiveContentPersistence getPersistence() {
+		if (_persistence == null) {
+			_persistence = (ArchiveContentPersistence)PortletBeanLocatorUtil.locate(com.ihg.me2.archive.service.service.ClpSerializer.SERVLET_CONTEXT_NAME,
+					ArchiveContentPersistence.class.getName());
+
+			ReferenceRegistry.registerReference(ArchiveContentUtil.class,
+				"_persistence");
+		}
+
+		return _persistence;
+	}
+
+	public void setPersistence(ArchiveContentPersistence persistence) {
+		_persistence = persistence;
+
+		ReferenceRegistry.registerReference(ArchiveContentUtil.class,
+			"_persistence");
+	}
+
+	private static ArchiveContentPersistence _persistence;
+}

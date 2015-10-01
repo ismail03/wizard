@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.ihg.me2.archive.service.model.ArchiveContent">
+		<field name="content_id" type="String">
+			<hint name="max-length">100</hint>
+		</field>
+		<field name="content_type" type="String">
+			<hint name="max-length">20</hint>
+		</field>
+		<field name="content_name" type="String">
+			<hint name="max-length">150</hint>
+		</field>
+		<field name="groupId" type="long" />
+		<field name="modified_date" type="Date" />
+		<field name="author_name" type="String">
+			<hint name="max-length">100</hint>
+		</field>
+		<field name="author_email" type="String">
+			<hint name="max-length">100</hint>
+		</field>
+		<field name="notified_date" type="Date" />
+		<field name="status" type="String">
+			<hint name="max-length">10</hint>
+		</field>
+		<field name="expired_date" type="Date" />
+		<field name="deleted_date" type="Date" />
+		<field name="content_url" type="String">
+			<hint name="max-length">500</hint>
+		</field>
+		<field name="create_datetime" type="Date" />
+		<field name="created_by" type="String" />
+		<field name="update_datetime" type="Date" />
+		<field name="updated_by" type="String" />
+	</model>
+</model-hints>

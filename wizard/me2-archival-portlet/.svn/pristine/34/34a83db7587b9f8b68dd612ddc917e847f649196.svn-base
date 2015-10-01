@@ -1,0 +1,325 @@
+package com.ihg.me2.archive.expireutil;
+
+import com.ihg.me2.archive.service.model.ArchiveContent;
+import com.ihg.me2.archive.service.service.ArchiveContentLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.Group;
+import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portlet.asset.model.AssetEntry;
+import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.model.DLFileEntry;
+import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
+import com.liferay.portlet.journal.model.JournalArticle;
+import com.liferay.portlet.journal.service.JournalArticleLocalServiceUtil;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+public class ExpireSchedulerUtil {
+	private final static Logger log = IndexerLogger
+			.getLogger(ExpireSchedulerUtil.class);
+
+	static List<ArchiveContent> webContetList = new ArrayList<ArchiveContent>();
+	static List<ArchiveContent> documentList = new ArrayList<ArchiveContent>();
+	static List<ArchiveContent> communityList = new ArrayList<ArchiveContent>();
+	static List<ArchiveContent> deletedFromPortalList = new ArrayList<ArchiveContent>();
+
+	public static void separateContents(
+			List<ArchiveContent> checkExpriedArchives) throws PortalException,
+			SystemException {
+		SimpleDateFormat formatDate = new SimpleDateFormat("MM/dd/yyyy");
+
+		JournalArticle journalArticle = null;
+		DLFileEntry dlFileEntry = null;
+		Group group = null;
+		try {
+			for (ArchiveContent archive : checkExpriedArchives) {
+				if (!archive.getContent_id().equals(null)) {
+					int id = Integer.parseInt(archive.getContent_id());
+
+					if (ArrayUtil.contains(SchedulerConstant.webContents,
+							archive.getContent_type())) {
+						journalArticle = getJournalArticleById(id);
+						if (Validator.isNotNull(journalArticle)) {
+							archive.setModified_date(formatDate
+									.parse(formatDate.format(journalArticle
+											.getModifiedDate())));
+							webContetList.add(archive);
+						} else {
+							deletedFromPortalList.add(archive);
+						}
+						continue;
+					}
+					if (ArrayUtil.contains(SchedulerConstant.documents,
+							archive.getContent_type())) {
+						dlFileEntry = getDlFileEntryById(id);
+
+						if (Validator.isNotNull(dlFileEntry)) {
+							archive.setModified_date(formatDate
+									.parse(formatDate.format(dlFileEntry
+											.getModifiedDate())));
+							documentList.add(archive);
+						} else {
+							deletedFromPortalList.add(archive);
+						}
+						continue;
+					}
+					if (ArrayUtil.contains(SchedulerConstant.communities,
+							archive.getContent_type())) {
+						group = getGroupById(id);
+						if (Validator.isNotNull(group)) {
+							communityList.add(archive);
+						} else {
+							deletedFromPortalList.add(archive);
+						}
+						continue;
+					}
+				}
+			}
+		} catch (ParseException e) {
+			log.error("Error while parsing the Date : " + e.getMessage(), e);
+		}
+		if (webContetList.size() != 0) {
+			expireWebcontents(webContetList);
+		}
+		if (documentList.size() != 0) {
+			expireDocuments(documentList);
+		}
+		if (communityList.size() != 0) {
+			expireCommunities(communityList);
+		}
+		if (deletedFromPortalList.size() != 0) {
+			changeStatus(deletedFromPortalList);
+		}
+	}
+
+	public static JournalArticle getJournalArticleById(int id) {
+		JournalArticle journalArticle = null;
+		try {
+			journalArticle = JournalArticleLocalServiceUtil
+					.getJournalArticle(id);
+		} catch (PortalException e) {
+			log.error("Error while get Journal Article : " + e.getMessage(), e);
+		} catch (SystemException e) {
+			log.error("Error from getJournalArticleById : " + e.getMessage(), e);
+		}
+		return journalArticle;
+	}
+
+	public static DLFileEntry getDlFileEntryById(int fileEntryId) {
+		DLFileEntry dLFileEntry = null;
+		try {
+			dLFileEntry = DLFileEntryLocalServiceUtil
+					.getDLFileEntry(fileEntryId);
+		} catch (PortalException e) {
+			log.error("Error while get DLFileEntry : " + e.getMessage(), e);
+		} catch (SystemException e) {
+			log.error("Error from getDLFileEntryById : " + e.getMessage(), e);
+		}
+		return dLFileEntry;
+	}
+
+	public static Group getGroupById(int groupId) {
+		Group group = null;
+		try {
+			group = GroupLocalServiceUtil.getGroup(groupId);
+		} catch (PortalException e) {
+			log.error("Error while get Group : " + e.getMessage(), e);
+		} catch (SystemException e) {
+			log.error("Error from getGroupById : " + e.getMessage(), e);
+		}
+		return group;
+	}
+
+	// To update expired Journal articles in Archive Content
+	public static void expireWebcontents(List<ArchiveContent> archives) {
+		for (ArchiveContent archive : archives) {
+			Date modifiedDate = archive.getModified_date();
+			Date expiredDate = archive.getExpired_date();
+			Date notifiedDate = archive.getNotified_date();
+
+			// if the Journal Article modified date is between the
+			// notified and
+			// expired date then change the status to Updated and also
+			// update the modified date in the Archive
+			// Content table.
+			try {
+				if (modifiedDate.before(expiredDate)
+						&& (modifiedDate.after(notifiedDate) || (modifiedDate
+								.equals(notifiedDate)))) {
+					ArchiveContentLocalServiceUtil
+							.deleteArchiveContent(archive);
+					archive.setStatus(SchedulerConstant.Updated);
+				} else {
+					archive.setStatus(SchedulerConstant.Expired);
+					ArchiveContentLocalServiceUtil
+							.updateArchiveContent(archive);
+				}
+			} catch (SystemException e) {
+				log.error(
+						"Error while updating Archive Content data in the Database : "
+								+ e.getMessage(), e);
+			}
+		}
+	}
+
+	// To update expired Document in Archive Content and also tag documents with
+	// the Expired keyword
+
+	public static void expireDocuments(List<ArchiveContent> archives) {
+		for (ArchiveContent archive : archives) {
+			Date modifiedDate = archive.getModified_date();
+			Date expiredDate = archive.getExpired_date();
+			Date notifiedDate = archive.getNotified_date();
+
+			try {
+				if (modifiedDate.before(expiredDate)
+						&& (modifiedDate.after(notifiedDate) || (modifiedDate
+								.equals(notifiedDate)))) {
+					ArchiveContentLocalServiceUtil
+							.deleteArchiveContent(archive);
+					archive.setStatus(SchedulerConstant.Updated);
+				} else {
+					DLFileEntry dlFileEntry = null;
+
+					int id = Integer.parseInt(archive.getContent_id());
+					dlFileEntry = getDlFileEntryById(id);
+					AssetEntry assetEntry = AssetEntryLocalServiceUtil
+							.getEntry(DLFileEntry.class.getName(),
+									dlFileEntry.getFileEntryId());
+					if (!assetEntry.equals(null)) {
+
+						int noOfTags = assetEntry.getTagNames().length;
+						String[] tagList = assetEntry.getTagNames();
+						String[] tagNames = new String[++noOfTags];
+
+						if (tagList.length != 0) {
+							for (int i = 0; i < tagList.length; i++) {
+								tagNames[i] = tagList[i];
+							}
+						}
+						tagNames[noOfTags - 1] = SchedulerConstant.Expired;
+
+						AssetEntryLocalServiceUtil.updateEntry(
+								dlFileEntry.getUserId(),
+								dlFileEntry.getGroupId(),
+								DLFileEntry.class.getName(),
+								dlFileEntry.getFileEntryId(), null, tagNames);
+						archive.setStatus(SchedulerConstant.Expired);
+						ArchiveContentLocalServiceUtil
+								.updateArchiveContent(archive);
+					}
+				}
+			} catch (SystemException e) {
+				log.error(
+						"Error while deleting document from Archive Content : "
+								+ e.getMessage(), e);
+			} catch (PortalException e) {
+				log.error("Error while getting or updating the Asset Entry : "
+						+ e.getMessage(), e);
+			}
+
+		}
+	}
+
+	// To update expired Community in Archive Content and also tag community
+	// with the Expired keyword
+
+	public static void expireCommunities(List<ArchiveContent> archives) {
+		for (ArchiveContent archive : archives) {
+
+			Group group = null;
+			int groupId = Integer.parseInt(archive.getContent_id());
+			group = getGroupById(groupId);
+			try {
+				AssetEntry assetEntry = AssetEntryLocalServiceUtil.getEntry(
+						group.getClassName(), group.getGroupId());
+
+				// If any of the content status of community is "Updated" then
+				// community status get changed to "Updated".
+
+				List<ArchiveContent> updatedWebContents = new ArrayList<ArchiveContent>();
+				if (webContetList.size() != 0) {
+					for (ArchiveContent webContent : webContetList) {
+						if (webContent.getGroupId() == groupId
+								&& webContent.getStatus().equals(
+										SchedulerConstant.Updated)) {
+							updatedWebContents.add(webContent);
+						}
+					}
+				}
+
+				List<ArchiveContent> updatedDocuments = new ArrayList<ArchiveContent>();
+				if (documentList.size() != 0) {
+					for (ArchiveContent document : documentList) {
+						if (document.getGroupId() == groupId
+								&& document.getStatus().equals(
+										SchedulerConstant.Updated)) {
+							updatedDocuments.add(document);
+						}
+					}
+				}
+
+				if (updatedWebContents.size() != 0
+						&& updatedDocuments.size() != 0) {
+
+					ArchiveContentLocalServiceUtil
+							.deleteArchiveContent(archive);
+					archive.setStatus(SchedulerConstant.Updated);
+				} else {
+					int noOfTags = assetEntry.getTagNames().length;
+					String[] tagList = assetEntry.getTagNames();
+					String[] tagNames = new String[++noOfTags];
+					if (tagList.length != 0) {
+						for (int i = 0; i < tagList.length; i++) {
+							tagNames[i] = tagList[i];
+						}
+					}
+					tagNames[noOfTags - 1] = SchedulerConstant.Expired;
+
+					if (!assetEntry.equals(null)) {
+						AssetEntryLocalServiceUtil.updateEntry(
+								group.getCreatorUserId(),
+								assetEntry.getGroupId(),
+								assetEntry.getClassName(), group.getGroupId(),
+								null, tagNames);
+						archive.setStatus(SchedulerConstant.Expired);
+						ArchiveContentLocalServiceUtil
+								.updateArchiveContent(archive);
+					}
+				}
+
+			} catch (SystemException e) {
+				log.error("Error while deleting group from Archive Content : "
+						+ e.getMessage(), e);
+			} catch (PortalException e) {
+				log.error("Error while getting or updating the Asset Entry : "
+						+ e.getMessage(), e);
+			}
+
+		}
+	}
+
+	public static void changeStatus(List<ArchiveContent> archives) {
+		for (ArchiveContent archive : archives) {
+			archive.setStatus(SchedulerConstant.DeletedFromPortal);
+			try {
+				ArchiveContentLocalServiceUtil.updateArchiveContent(archive);
+			} catch (SystemException e) {
+				log.error(
+						"Error while updating the Archive Content: "
+								+ e.getMessage(), e);
+			}
+
+		}
+	}
+
+}

@@ -1,0 +1,404 @@
+/**
+ * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.ihg.me2.archive.service.model;
+
+/**
+ * <p>
+ * This class is a wrapper for {@link ArchiveContent}.
+ * </p>
+ *
+ * @author    Sandip Patel
+ * @see       ArchiveContent
+ * @generated
+ */
+public class ArchiveContentWrapper implements ArchiveContent {
+	public ArchiveContentWrapper(ArchiveContent archiveContent) {
+		_archiveContent = archiveContent;
+	}
+
+	/**
+	* Gets the primary key of this archive content.
+	*
+	* @return the primary key of this archive content
+	*/
+	public java.lang.String getPrimaryKey() {
+		return _archiveContent.getPrimaryKey();
+	}
+
+	/**
+	* Sets the primary key of this archive content
+	*
+	* @param pk the primary key of this archive content
+	*/
+	public void setPrimaryKey(java.lang.String pk) {
+		_archiveContent.setPrimaryKey(pk);
+	}
+
+	/**
+	* Gets the content_id of this archive content.
+	*
+	* @return the content_id of this archive content
+	*/
+	public java.lang.String getContent_id() {
+		return _archiveContent.getContent_id();
+	}
+
+	/**
+	* Sets the content_id of this archive content.
+	*
+	* @param content_id the content_id of this archive content
+	*/
+	public void setContent_id(java.lang.String content_id) {
+		_archiveContent.setContent_id(content_id);
+	}
+
+	/**
+	* Gets the content_type of this archive content.
+	*
+	* @return the content_type of this archive content
+	*/
+	public java.lang.String getContent_type() {
+		return _archiveContent.getContent_type();
+	}
+
+	/**
+	* Sets the content_type of this archive content.
+	*
+	* @param content_type the content_type of this archive content
+	*/
+	public void setContent_type(java.lang.String content_type) {
+		_archiveContent.setContent_type(content_type);
+	}
+
+	/**
+	* Gets the content_name of this archive content.
+	*
+	* @return the content_name of this archive content
+	*/
+	public java.lang.String getContent_name() {
+		return _archiveContent.getContent_name();
+	}
+
+	/**
+	* Sets the content_name of this archive content.
+	*
+	* @param content_name the content_name of this archive content
+	*/
+	public void setContent_name(java.lang.String content_name) {
+		_archiveContent.setContent_name(content_name);
+	}
+
+	/**
+	* Gets the group id of this archive content.
+	*
+	* @return the group id of this archive content
+	*/
+	public long getGroupId() {
+		return _archiveContent.getGroupId();
+	}
+
+	/**
+	* Sets the group id of this archive content.
+	*
+	* @param groupId the group id of this archive content
+	*/
+	public void setGroupId(long groupId) {
+		_archiveContent.setGroupId(groupId);
+	}
+
+	/**
+	* Gets the modified_date of this archive content.
+	*
+	* @return the modified_date of this archive content
+	*/
+	public java.util.Date getModified_date() {
+		return _archiveContent.getModified_date();
+	}
+
+	/**
+	* Sets the modified_date of this archive content.
+	*
+	* @param modified_date the modified_date of this archive content
+	*/
+	public void setModified_date(java.util.Date modified_date) {
+		_archiveContent.setModified_date(modified_date);
+	}
+
+	/**
+	* Gets the author_name of this archive content.
+	*
+	* @return the author_name of this archive content
+	*/
+	public java.lang.String getAuthor_name() {
+		return _archiveContent.getAuthor_name();
+	}
+
+	/**
+	* Sets the author_name of this archive content.
+	*
+	* @param author_name the author_name of this archive content
+	*/
+	public void setAuthor_name(java.lang.String author_name) {
+		_archiveContent.setAuthor_name(author_name);
+	}
+
+	/**
+	* Gets the author_email of this archive content.
+	*
+	* @return the author_email of this archive content
+	*/
+	public java.lang.String getAuthor_email() {
+		return _archiveContent.getAuthor_email();
+	}
+
+	/**
+	* Sets the author_email of this archive content.
+	*
+	* @param author_email the author_email of this archive content
+	*/
+	public void setAuthor_email(java.lang.String author_email) {
+		_archiveContent.setAuthor_email(author_email);
+	}
+
+	/**
+	* Gets the notified_date of this archive content.
+	*
+	* @return the notified_date of this archive content
+	*/
+	public java.util.Date getNotified_date() {
+		return _archiveContent.getNotified_date();
+	}
+
+	/**
+	* Sets the notified_date of this archive content.
+	*
+	* @param notified_date the notified_date of this archive content
+	*/
+	public void setNotified_date(java.util.Date notified_date) {
+		_archiveContent.setNotified_date(notified_date);
+	}
+
+	/**
+	* Gets the status of this archive content.
+	*
+	* @return the status of this archive content
+	*/
+	public java.lang.String getStatus() {
+		return _archiveContent.getStatus();
+	}
+
+	/**
+	* Sets the status of this archive content.
+	*
+	* @param status the status of this archive content
+	*/
+	public void setStatus(java.lang.String status) {
+		_archiveContent.setStatus(status);
+	}
+
+	/**
+	* Gets the expired_date of this archive content.
+	*
+	* @return the expired_date of this archive content
+	*/
+	public java.util.Date getExpired_date() {
+		return _archiveContent.getExpired_date();
+	}
+
+	/**
+	* Sets the expired_date of this archive content.
+	*
+	* @param expired_date the expired_date of this archive content
+	*/
+	public void setExpired_date(java.util.Date expired_date) {
+		_archiveContent.setExpired_date(expired_date);
+	}
+
+	/**
+	* Gets the deleted_date of this archive content.
+	*
+	* @return the deleted_date of this archive content
+	*/
+	public java.util.Date getDeleted_date() {
+		return _archiveContent.getDeleted_date();
+	}
+
+	/**
+	* Sets the deleted_date of this archive content.
+	*
+	* @param deleted_date the deleted_date of this archive content
+	*/
+	public void setDeleted_date(java.util.Date deleted_date) {
+		_archiveContent.setDeleted_date(deleted_date);
+	}
+
+	/**
+	* Gets the content_url of this archive content.
+	*
+	* @return the content_url of this archive content
+	*/
+	public java.lang.String getContent_url() {
+		return _archiveContent.getContent_url();
+	}
+
+	/**
+	* Sets the content_url of this archive content.
+	*
+	* @param content_url the content_url of this archive content
+	*/
+	public void setContent_url(java.lang.String content_url) {
+		_archiveContent.setContent_url(content_url);
+	}
+
+	/**
+	* Gets the create_datetime of this archive content.
+	*
+	* @return the create_datetime of this archive content
+	*/
+	public java.util.Date getCreate_datetime() {
+		return _archiveContent.getCreate_datetime();
+	}
+
+	/**
+	* Sets the create_datetime of this archive content.
+	*
+	* @param create_datetime the create_datetime of this archive content
+	*/
+	public void setCreate_datetime(java.util.Date create_datetime) {
+		_archiveContent.setCreate_datetime(create_datetime);
+	}
+
+	/**
+	* Gets the created_by of this archive content.
+	*
+	* @return the created_by of this archive content
+	*/
+	public java.lang.String getCreated_by() {
+		return _archiveContent.getCreated_by();
+	}
+
+	/**
+	* Sets the created_by of this archive content.
+	*
+	* @param created_by the created_by of this archive content
+	*/
+	public void setCreated_by(java.lang.String created_by) {
+		_archiveContent.setCreated_by(created_by);
+	}
+
+	/**
+	* Gets the update_datetime of this archive content.
+	*
+	* @return the update_datetime of this archive content
+	*/
+	public java.util.Date getUpdate_datetime() {
+		return _archiveContent.getUpdate_datetime();
+	}
+
+	/**
+	* Sets the update_datetime of this archive content.
+	*
+	* @param update_datetime the update_datetime of this archive content
+	*/
+	public void setUpdate_datetime(java.util.Date update_datetime) {
+		_archiveContent.setUpdate_datetime(update_datetime);
+	}
+
+	/**
+	* Gets the updated_by of this archive content.
+	*
+	* @return the updated_by of this archive content
+	*/
+	public java.lang.String getUpdated_by() {
+		return _archiveContent.getUpdated_by();
+	}
+
+	/**
+	* Sets the updated_by of this archive content.
+	*
+	* @param updated_by the updated_by of this archive content
+	*/
+	public void setUpdated_by(java.lang.String updated_by) {
+		_archiveContent.setUpdated_by(updated_by);
+	}
+
+	public boolean isNew() {
+		return _archiveContent.isNew();
+	}
+
+	public void setNew(boolean n) {
+		_archiveContent.setNew(n);
+	}
+
+	public boolean isCachedModel() {
+		return _archiveContent.isCachedModel();
+	}
+
+	public void setCachedModel(boolean cachedModel) {
+		_archiveContent.setCachedModel(cachedModel);
+	}
+
+	public boolean isEscapedModel() {
+		return _archiveContent.isEscapedModel();
+	}
+
+	public void setEscapedModel(boolean escapedModel) {
+		_archiveContent.setEscapedModel(escapedModel);
+	}
+
+	public java.io.Serializable getPrimaryKeyObj() {
+		return _archiveContent.getPrimaryKeyObj();
+	}
+
+	public com.liferay.portlet.expando.model.ExpandoBridge getExpandoBridge() {
+		return _archiveContent.getExpandoBridge();
+	}
+
+	public void setExpandoBridgeAttributes(
+		com.liferay.portal.service.ServiceContext serviceContext) {
+		_archiveContent.setExpandoBridgeAttributes(serviceContext);
+	}
+
+	public java.lang.Object clone() {
+		return new ArchiveContentWrapper((ArchiveContent)_archiveContent.clone());
+	}
+
+	public int compareTo(
+		com.ihg.me2.archive.service.model.ArchiveContent archiveContent) {
+		return _archiveContent.compareTo(archiveContent);
+	}
+
+	public int hashCode() {
+		return _archiveContent.hashCode();
+	}
+
+	public com.ihg.me2.archive.service.model.ArchiveContent toEscapedModel() {
+		return new ArchiveContentWrapper(_archiveContent.toEscapedModel());
+	}
+
+	public java.lang.String toString() {
+		return _archiveContent.toString();
+	}
+
+	public java.lang.String toXmlString() {
+		return _archiveContent.toXmlString();
+	}
+
+	public ArchiveContent getWrappedArchiveContent() {
+		return _archiveContent;
+	}
+
+	private ArchiveContent _archiveContent;
+}

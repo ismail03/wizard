@@ -1,0 +1,189 @@
+package com.ihg.me2.archive.scheduler;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import com.ihg.me2.archive.expireutil.ExpireSchedulerUtil;
+import com.ihg.me2.archive.expireutil.SchedulerConstant;
+import com.ihg.me2.archive.service.model.ArchiveContent;
+import com.ihg.me2.archive.service.service.ArchiveContentLocalServiceUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portlet.asset.model.AssetEntry;
+import com.liferay.portlet.asset.service.AssetEntryLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.model.DLFileEntry;
+import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.joda.time.DateTime;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ DLFileEntryLocalServiceUtil.class,
+		ArchiveContentLocalServiceUtil.class, AssetEntryLocalServiceUtil.class,
+		String.class, DLFileEntry.class })
+public class ExpireSchedulerDocumentTest {
+	public ArchiveContent getExpiredDocument(int i) {
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+		Date currentDate = null;
+		try {
+			currentDate = sdf.parse(sdf.format(date));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		Date modifiedDate = new DateTime().minusDays(50).toDate();
+
+		Date notifidDate = new DateTime().minusDays(20).toDate();
+
+		ArchiveContent mockArchive = mock(ArchiveContent.class);
+		when(mockArchive.getContent_id()).thenReturn(String.valueOf(i));
+		when(mockArchive.getContent_type()).thenReturn("news_resource");
+		when(mockArchive.getAuthor_email()).thenReturn("test@gmail.com");
+		when(mockArchive.getAuthor_name()).thenReturn("testing");
+		when(mockArchive.getExpired_date()).thenReturn(currentDate);
+		when(mockArchive.getModified_date()).thenReturn(modifiedDate);
+		when(mockArchive.getNotified_date()).thenReturn(notifidDate);
+		when(mockArchive.getStatus()).thenReturn("Notified");
+		return mockArchive;
+	}
+
+	// Expire Document SuccessTest
+	// Changes the status to Expired in Archive Content and also tag the
+	// Document with the Expired keyword
+	@Test
+	public void expireDocumentSuccessTest() throws SystemException,
+			ParseException, PortalException {
+		List<ArchiveContent> expiredDocumentArchives = new ArrayList<ArchiveContent>();
+
+		ArchiveContent expiredArchive = getExpiredDocument(1001);
+		expiredDocumentArchives.add(expiredArchive);
+
+		// mock DLFileEntry
+		Date modifiedDate = new DateTime().minusDays(50).toDate();
+
+		DLFileEntry mockDLFileEntry = mock(DLFileEntry.class);
+		when(mockDLFileEntry.getFileEntryId()).thenReturn(Long.valueOf(1001));
+		when(mockDLFileEntry.getModifiedDate()).thenReturn(modifiedDate);
+		when(mockDLFileEntry.getUserId()).thenReturn(101L);
+		when(mockDLFileEntry.getGroupId()).thenReturn(Long.valueOf(1080));
+
+		PowerMockito.mockStatic(DLFileEntryLocalServiceUtil.class);
+		when(DLFileEntryLocalServiceUtil.getDLFileEntry(1001)).thenReturn(
+				mockDLFileEntry);
+
+		PowerMockito.mockStatic(DLFileEntry.class);
+		when(mock(DLFileEntry.class).getName()).thenReturn(
+				"com.liferay.portlet.documentlibrary.model.DLFileEntry");
+		String[] tagNames = { "Expired" };
+
+		// mock AssetEntry
+		AssetEntry mockAssetEntry = mock(AssetEntry.class);
+		when(mockAssetEntry.getPrimaryKey()).thenReturn(Long.valueOf(5555));
+		when(mockAssetEntry.getGroupId()).thenReturn(Long.valueOf(1080));
+		when(mockAssetEntry.getClassPK()).thenReturn(Long.valueOf(1001));
+		when(mockAssetEntry.getUserId()).thenReturn(5555L);
+		when(mockAssetEntry.getModifiedDate()).thenReturn(modifiedDate);
+		when(mockAssetEntry.getTagNames()).thenReturn(
+				new String[] { "E1", "E2" });
+
+		PowerMockito.mockStatic(AssetEntryLocalServiceUtil.class);
+		when(
+				AssetEntryLocalServiceUtil
+						.getEntry(
+								"com.liferay.portlet.documentlibrary.model.DLFileEntry",
+								mockDLFileEntry.getFileEntryId())).thenReturn(
+				mockAssetEntry);
+		when(
+				AssetEntryLocalServiceUtil.updateEntry(
+						mockDLFileEntry.getUserId(),
+						mockDLFileEntry.getGroupId(), "ClassName",
+						mockDLFileEntry.getFileEntryId(), null, tagNames))
+				.thenReturn(mockAssetEntry);
+
+		// mock Archive Content
+		ArchiveContent mockExpiredArchive = getExpiredDocument(1001);
+		when(mockExpiredArchive.getStatus()).thenReturn("Expired");
+
+		PowerMockito.mockStatic(ArchiveContentLocalServiceUtil.class);
+		when(
+				ArchiveContentLocalServiceUtil
+						.updateArchiveContent(mockExpiredArchive)).thenReturn(
+				mockExpiredArchive);
+
+		ExpireSchedulerUtil.separateContents(expiredDocumentArchives);
+	}
+
+	// Delete updated Document SuccessTest
+	// Changes the status to Expired in Archive Content and also tag the
+	// document with the Expired Keyword
+	@Test(expected = NullPointerException.class)
+	public void deleteUpdatedDocumentSuccessTest() throws Exception {
+		List<ArchiveContent> expiredDocumentArchives = new ArrayList<ArchiveContent>();
+
+		ArchiveContent mockArchive = mock(ArchiveContent.class);
+		mockArchive = getExpiredDocument(1001);
+		when(mockArchive.getModified_date()).thenReturn(
+				new DateTime().minusDays(10).toDate());
+		expiredDocumentArchives.add(mockArchive);
+
+		// mock DLFileEntry
+		Date modifiedDate = new DateTime().minusDays(10).toDate();
+
+		DLFileEntry mockDLFileEntry = mock(DLFileEntry.class);
+		when(mockDLFileEntry.getFileEntryId()).thenReturn(Long.valueOf(1001));
+		when(mockDLFileEntry.getModifiedDate()).thenReturn(modifiedDate);
+		when(mockDLFileEntry.getUserId()).thenReturn(101L);
+		when(mockDLFileEntry.getGroupId()).thenReturn(Long.valueOf(1080));
+
+		PowerMockito.mockStatic(DLFileEntryLocalServiceUtil.class);
+		when(DLFileEntryLocalServiceUtil.getDLFileEntry(1001)).thenReturn(
+				mockDLFileEntry);
+
+		PowerMockito.mockStatic(ArchiveContentLocalServiceUtil.class);
+		PowerMockito.doThrow(new NullPointerException()).when(
+				ArchiveContentLocalServiceUtil.class, "deleteArchiveContent",
+				Mockito.any(ArchiveContent.class));
+
+		ExpireSchedulerUtil.separateContents(expiredDocumentArchives);
+	}
+
+	// Document Failure Test
+	// Remove Document from the DLFileEntry
+	@Test
+	public void testForNullExpiredDocuments() throws SystemException,
+			ParseException, PortalException {
+		List<ArchiveContent> expiredDocumentArchives = new ArrayList<ArchiveContent>();
+
+		ArchiveContent expiredArchive = getExpiredDocument(1001);
+		expiredDocumentArchives.add(expiredArchive);
+
+		// mock DLFileEntry
+		PowerMockito.mockStatic(DLFileEntryLocalServiceUtil.class);
+		when(DLFileEntryLocalServiceUtil.getDLFileEntry(1001)).thenReturn(null);
+
+		// mock Archive Content
+		ArchiveContent mockExpiredArchive = getExpiredDocument(1001);
+		when(mockExpiredArchive.getStatus()).thenReturn(
+				SchedulerConstant.DELETEDFROMPORTAL);
+
+		PowerMockito.mockStatic(ArchiveContentLocalServiceUtil.class);
+		when(
+				ArchiveContentLocalServiceUtil
+						.updateArchiveContent(mockExpiredArchive)).thenReturn(
+				mockExpiredArchive);
+
+		ExpireSchedulerUtil.separateContents(expiredDocumentArchives);
+	}
+}

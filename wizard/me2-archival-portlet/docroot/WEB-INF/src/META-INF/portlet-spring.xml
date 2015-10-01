@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" default-destroy-method="destroy" default-init-method="afterPropertiesSet" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	<bean id="com.ihg.me2.archive.service.service.ArchiveContentLocalService" class="com.ihg.me2.archive.service.service.impl.ArchiveContentLocalServiceImpl" />
+	<bean id="com.ihg.me2.archive.service.service.ArchiveContentLocalServiceUtil" class="com.ihg.me2.archive.service.service.ArchiveContentLocalServiceUtil">
+		<property name="service" ref="com.ihg.me2.archive.service.service.ArchiveContentLocalService" />
+	</bean>
+	<bean id="com.ihg.me2.archive.service.service.ArchiveContentService" class="com.ihg.me2.archive.service.service.impl.ArchiveContentServiceImpl" />
+	<bean id="com.ihg.me2.archive.service.service.ArchiveContentServiceUtil" class="com.ihg.me2.archive.service.service.ArchiveContentServiceUtil">
+		<property name="service" ref="com.ihg.me2.archive.service.service.ArchiveContentService" />
+	</bean>
+	<bean id="com.ihg.me2.archive.service.service.persistence.ArchiveContentPersistence" class="com.ihg.me2.archive.service.service.persistence.ArchiveContentPersistenceImpl" parent="basePersistence">
+		<property name="dataSource" ref="archiveDataSource" />
+	</bean>
+	<bean id="com.ihg.me2.archive.service.service.persistence.ArchiveContentFinder" class="com.ihg.me2.archive.service.service.persistence.ArchiveContentFinderImpl" parent="basePersistence">
+		<property name="dataSource" ref="archiveDataSource" />
+	</bean>
+</beans>

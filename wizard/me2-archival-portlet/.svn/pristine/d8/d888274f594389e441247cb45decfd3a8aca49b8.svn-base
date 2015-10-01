@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false" auto-import="false">
+	<import class="com.ihg.me2.archive.service.model.ArchiveContent" />
+	<class name="com.ihg.me2.archive.service.model.impl.ArchiveContentImpl" table="archive_content">
+		<cache usage="read-write" />
+		<id name="content_id" type="java.lang.String">
+			<generator class="assigned" />
+		</id>
+		<property name="content_type" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="content_name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="modified_date" type="org.hibernate.type.TimestampType" />
+		<property name="author_name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="author_email" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="notified_date" type="org.hibernate.type.TimestampType" />
+		<property name="status" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="expired_date" type="org.hibernate.type.TimestampType" />
+		<property name="deleted_date" type="org.hibernate.type.TimestampType" />
+		<property name="content_url" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="create_datetime" type="org.hibernate.type.TimestampType" />
+		<property name="created_by" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="update_datetime" type="org.hibernate.type.TimestampType" />
+		<property name="updated_by" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+	</class>
+</hibernate-mapping>

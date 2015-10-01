@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-lazy="false" auto-import="false">
+	<import class="com.ihg.me2.archive.service.model.ArchiveContent" />
+	<class name="com.ihg.me2.archive.service.model.impl.ArchiveContentImpl" table="ARCHIVAL_CONTENT">
+		<cache usage="read-write" />
+		<id name="CONTENT_ID" type="java.lang.String">
+			<generator class="assigned" />
+		</id>
+		<property name="CONTENT_TYP" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="CONTENT_NM" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="GRP_ID" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="AUTHOR_EMAIL_ID" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="AUTHOR_NM" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="CONTENT_URL_TXT" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="CONTENT_STAT_CD" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="CONTENT_STAT_MOD_DT" type="org.hibernate.type.TimestampType" />
+		<property name="CONTENT_STAT_NOTIFIED_DT" type="org.hibernate.type.TimestampType" />
+		<property name="CONTENT_STAT_EXPIRED_DT" type="org.hibernate.type.TimestampType" />
+		<property name="CONTENT_STAT_DEL_DT" type="org.hibernate.type.TimestampType" />
+		<property name="CREAT_USR_ID" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="CREAT_TS" type="org.hibernate.type.TimestampType" />
+		<property name="LST_UPDT_USR_ID" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property name="LST_UPDT_TS" type="org.hibernate.type.TimestampType" />
+	</class>
+</hibernate-mapping>

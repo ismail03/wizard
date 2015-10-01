@@ -1,0 +1,1 @@
+Liferay.Service.register("Liferay.Service.archive", "com.ihg.me2.archive.service.service", "me2-archival-portlet");

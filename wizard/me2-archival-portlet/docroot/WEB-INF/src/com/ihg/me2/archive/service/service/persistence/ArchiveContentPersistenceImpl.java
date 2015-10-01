@@ -1,0 +1,574 @@
+/**
+ * Copyright (c) 2000-2011 Liferay, Inc. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
+package com.ihg.me2.archive.service.service.persistence;
+
+import com.ihg.me2.archive.service.NoSuchArchiveContentException;
+import com.ihg.me2.archive.service.model.ArchiveContent;
+import com.ihg.me2.archive.service.model.impl.ArchiveContentImpl;
+import com.ihg.me2.archive.service.model.impl.ArchiveContentModelImpl;
+
+import com.liferay.portal.NoSuchModelException;
+import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.kernel.cache.CacheRegistryUtil;
+import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
+import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
+import com.liferay.portal.kernel.dao.orm.FinderPath;
+import com.liferay.portal.kernel.dao.orm.Query;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.InstanceFactory;
+import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.model.ModelListener;
+import com.liferay.portal.service.persistence.BatchSessionUtil;
+import com.liferay.portal.service.persistence.ResourcePersistence;
+import com.liferay.portal.service.persistence.UserPersistence;
+import com.liferay.portal.service.persistence.impl.BasePersistenceImpl;
+
+import java.io.Serializable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * The persistence implementation for the archive content service.
+ *
+ * <p>
+ * Caching information and settings can be found in <code>portal.properties</code>
+ * </p>
+ *
+ * @author Sandip Patel
+ * @see ArchiveContentPersistence
+ * @see ArchiveContentUtil
+ * @generated
+ */
+public class ArchiveContentPersistenceImpl extends BasePersistenceImpl<ArchiveContent>
+	implements ArchiveContentPersistence {
+	/*
+	 * NOTE FOR DEVELOPERS:
+	 *
+	 * Never modify or reference this class directly. Always use {@link ArchiveContentUtil} to access the archive content persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
+	 */
+	public static final String FINDER_CLASS_NAME_ENTITY = ArchiveContentImpl.class.getName();
+	public static final String FINDER_CLASS_NAME_LIST = FINDER_CLASS_NAME_ENTITY +
+		".List";
+	public static final FinderPath FINDER_PATH_FIND_ALL = new FinderPath(ArchiveContentModelImpl.ENTITY_CACHE_ENABLED,
+			ArchiveContentModelImpl.FINDER_CACHE_ENABLED,
+			FINDER_CLASS_NAME_LIST, "findAll", new String[0]);
+	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(ArchiveContentModelImpl.ENTITY_CACHE_ENABLED,
+			ArchiveContentModelImpl.FINDER_CACHE_ENABLED,
+			FINDER_CLASS_NAME_LIST, "countAll", new String[0]);
+
+	/**
+	 * Caches the archive content in the entity cache if it is enabled.
+	 *
+	 * @param archiveContent the archive content to cache
+	 */
+	public void cacheResult(ArchiveContent archiveContent) {
+		EntityCacheUtil.putResult(ArchiveContentModelImpl.ENTITY_CACHE_ENABLED,
+			ArchiveContentImpl.class, archiveContent.getPrimaryKey(),
+			archiveContent);
+	}
+
+	/**
+	 * Caches the archive contents in the entity cache if it is enabled.
+	 *
+	 * @param archiveContents the archive contents to cache
+	 */
+	public void cacheResult(List<ArchiveContent> archiveContents) {
+		for (ArchiveContent archiveContent : archiveContents) {
+			if (EntityCacheUtil.getResult(
+						ArchiveContentModelImpl.ENTITY_CACHE_ENABLED,
+						ArchiveContentImpl.class,
+						archiveContent.getPrimaryKey(), this) == null) {
+				cacheResult(archiveContent);
+			}
+		}
+	}
+
+	/**
+	 * Clears the cache for all archive contents.
+	 *
+	 * <p>
+	 * The {@link com.liferay.portal.kernel.dao.orm.EntityCache} and {@link com.liferay.portal.kernel.dao.orm.FinderCache} are both cleared by this method.
+	 * </p>
+	 */
+	public void clearCache() {
+		CacheRegistryUtil.clear(ArchiveContentImpl.class.getName());
+		EntityCacheUtil.clearCache(ArchiveContentImpl.class.getName());
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_ENTITY);
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST);
+	}
+
+	/**
+	 * Clears the cache for the archive content.
+	 *
+	 * <p>
+	 * The {@link com.liferay.portal.kernel.dao.orm.EntityCache} and {@link com.liferay.portal.kernel.dao.orm.FinderCache} are both cleared by this method.
+	 * </p>
+	 */
+	public void clearCache(ArchiveContent archiveContent) {
+		EntityCacheUtil.removeResult(ArchiveContentModelImpl.ENTITY_CACHE_ENABLED,
+			ArchiveContentImpl.class, archiveContent.getPrimaryKey());
+	}
+
+	/**
+	 * Creates a new archive content with the primary key. Does not add the archive content to the database.
+	 *
+	 * @param CONTENT_ID the primary key for the new archive content
+	 * @return the new archive content
+	 */
+	public ArchiveContent create(String CONTENT_ID) {
+		ArchiveContent archiveContent = new ArchiveContentImpl();
+
+		archiveContent.setNew(true);
+		archiveContent.setPrimaryKey(CONTENT_ID);
+
+		return archiveContent;
+	}
+
+	/**
+	 * Removes the archive content with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param primaryKey the primary key of the archive content to remove
+	 * @return the archive content that was removed
+	 * @throws com.liferay.portal.NoSuchModelException if a archive content with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	public ArchiveContent remove(Serializable primaryKey)
+		throws NoSuchModelException, SystemException {
+		return remove((String)primaryKey);
+	}
+
+	/**
+	 * Removes the archive content with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param CONTENT_ID the primary key of the archive content to remove
+	 * @return the archive content that was removed
+	 * @throws com.ihg.me2.archive.service.NoSuchArchiveContentException if a archive content with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	public ArchiveContent remove(String CONTENT_ID)
+		throws NoSuchArchiveContentException, SystemException {
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			ArchiveContent archiveContent = (ArchiveContent)session.get(ArchiveContentImpl.class,
+					CONTENT_ID);
+
+			if (archiveContent == null) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + CONTENT_ID);
+				}
+
+				throw new NoSuchArchiveContentException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
+					CONTENT_ID);
+			}
+
+			return remove(archiveContent);
+		}
+		catch (NoSuchArchiveContentException nsee) {
+			throw nsee;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected ArchiveContent removeImpl(ArchiveContent archiveContent)
+		throws SystemException {
+		archiveContent = toUnwrappedModel(archiveContent);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			BatchSessionUtil.delete(session, archiveContent);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST);
+
+		EntityCacheUtil.removeResult(ArchiveContentModelImpl.ENTITY_CACHE_ENABLED,
+			ArchiveContentImpl.class, archiveContent.getPrimaryKey());
+
+		return archiveContent;
+	}
+
+	public ArchiveContent updateImpl(
+		com.ihg.me2.archive.service.model.ArchiveContent archiveContent,
+		boolean merge) throws SystemException {
+		archiveContent = toUnwrappedModel(archiveContent);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			BatchSessionUtil.update(session, archiveContent, merge);
+
+			archiveContent.setNew(false);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+
+		FinderCacheUtil.clearCache(FINDER_CLASS_NAME_LIST);
+
+		EntityCacheUtil.putResult(ArchiveContentModelImpl.ENTITY_CACHE_ENABLED,
+			ArchiveContentImpl.class, archiveContent.getPrimaryKey(),
+			archiveContent);
+
+		return archiveContent;
+	}
+
+	protected ArchiveContent toUnwrappedModel(ArchiveContent archiveContent) {
+		if (archiveContent instanceof ArchiveContentImpl) {
+			return archiveContent;
+		}
+
+		ArchiveContentImpl archiveContentImpl = new ArchiveContentImpl();
+
+		archiveContentImpl.setNew(archiveContent.isNew());
+		archiveContentImpl.setPrimaryKey(archiveContent.getPrimaryKey());
+
+		archiveContentImpl.setCONTENT_ID(archiveContent.getCONTENT_ID());
+		archiveContentImpl.setCONTENT_TYP(archiveContent.getCONTENT_TYP());
+		archiveContentImpl.setCONTENT_NM(archiveContent.getCONTENT_NM());
+		archiveContentImpl.setGRP_ID(archiveContent.getGRP_ID());
+		archiveContentImpl.setAUTHOR_EMAIL_ID(archiveContent.getAUTHOR_EMAIL_ID());
+		archiveContentImpl.setAUTHOR_NM(archiveContent.getAUTHOR_NM());
+		archiveContentImpl.setCONTENT_URL_TXT(archiveContent.getCONTENT_URL_TXT());
+		archiveContentImpl.setCONTENT_STAT_CD(archiveContent.getCONTENT_STAT_CD());
+		archiveContentImpl.setCONTENT_STAT_MOD_DT(archiveContent.getCONTENT_STAT_MOD_DT());
+		archiveContentImpl.setCONTENT_STAT_NOTIFIED_DT(archiveContent.getCONTENT_STAT_NOTIFIED_DT());
+		archiveContentImpl.setCONTENT_STAT_EXPIRED_DT(archiveContent.getCONTENT_STAT_EXPIRED_DT());
+		archiveContentImpl.setCONTENT_STAT_DEL_DT(archiveContent.getCONTENT_STAT_DEL_DT());
+		archiveContentImpl.setCREAT_USR_ID(archiveContent.getCREAT_USR_ID());
+		archiveContentImpl.setCREAT_TS(archiveContent.getCREAT_TS());
+		archiveContentImpl.setLST_UPDT_USR_ID(archiveContent.getLST_UPDT_USR_ID());
+		archiveContentImpl.setLST_UPDT_TS(archiveContent.getLST_UPDT_TS());
+
+		return archiveContentImpl;
+	}
+
+	/**
+	 * Finds the archive content with the primary key or throws a {@link com.liferay.portal.NoSuchModelException} if it could not be found.
+	 *
+	 * @param primaryKey the primary key of the archive content to find
+	 * @return the archive content
+	 * @throws com.liferay.portal.NoSuchModelException if a archive content with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	public ArchiveContent findByPrimaryKey(Serializable primaryKey)
+		throws NoSuchModelException, SystemException {
+		return findByPrimaryKey((String)primaryKey);
+	}
+
+	/**
+	 * Finds the archive content with the primary key or throws a {@link com.ihg.me2.archive.service.NoSuchArchiveContentException} if it could not be found.
+	 *
+	 * @param CONTENT_ID the primary key of the archive content to find
+	 * @return the archive content
+	 * @throws com.ihg.me2.archive.service.NoSuchArchiveContentException if a archive content with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	public ArchiveContent findByPrimaryKey(String CONTENT_ID)
+		throws NoSuchArchiveContentException, SystemException {
+		ArchiveContent archiveContent = fetchByPrimaryKey(CONTENT_ID);
+
+		if (archiveContent == null) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + CONTENT_ID);
+			}
+
+			throw new NoSuchArchiveContentException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
+				CONTENT_ID);
+		}
+
+		return archiveContent;
+	}
+
+	/**
+	 * Finds the archive content with the primary key or returns <code>null</code> if it could not be found.
+	 *
+	 * @param primaryKey the primary key of the archive content to find
+	 * @return the archive content, or <code>null</code> if a archive content with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	public ArchiveContent fetchByPrimaryKey(Serializable primaryKey)
+		throws SystemException {
+		return fetchByPrimaryKey((String)primaryKey);
+	}
+
+	/**
+	 * Finds the archive content with the primary key or returns <code>null</code> if it could not be found.
+	 *
+	 * @param CONTENT_ID the primary key of the archive content to find
+	 * @return the archive content, or <code>null</code> if a archive content with the primary key could not be found
+	 * @throws SystemException if a system exception occurred
+	 */
+	public ArchiveContent fetchByPrimaryKey(String CONTENT_ID)
+		throws SystemException {
+		ArchiveContent archiveContent = (ArchiveContent)EntityCacheUtil.getResult(ArchiveContentModelImpl.ENTITY_CACHE_ENABLED,
+				ArchiveContentImpl.class, CONTENT_ID, this);
+
+		if (archiveContent == null) {
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				archiveContent = (ArchiveContent)session.get(ArchiveContentImpl.class,
+						CONTENT_ID);
+			}
+			catch (Exception e) {
+				throw processException(e);
+			}
+			finally {
+				if (archiveContent != null) {
+					cacheResult(archiveContent);
+				}
+
+				closeSession(session);
+			}
+		}
+
+		return archiveContent;
+	}
+
+	/**
+	 * Finds all the archive contents.
+	 *
+	 * @return the archive contents
+	 * @throws SystemException if a system exception occurred
+	 */
+	public List<ArchiveContent> findAll() throws SystemException {
+		return findAll(QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Finds a range of all the archive contents.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
+	 * </p>
+	 *
+	 * @param start the lower bound of the range of archive contents to return
+	 * @param end the upper bound of the range of archive contents to return (not inclusive)
+	 * @return the range of archive contents
+	 * @throws SystemException if a system exception occurred
+	 */
+	public List<ArchiveContent> findAll(int start, int end)
+		throws SystemException {
+		return findAll(start, end, null);
+	}
+
+	/**
+	 * Finds an ordered range of all the archive contents.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set.
+	 * </p>
+	 *
+	 * @param start the lower bound of the range of archive contents to return
+	 * @param end the upper bound of the range of archive contents to return (not inclusive)
+	 * @param orderByComparator the comparator to order the results by
+	 * @return the ordered range of archive contents
+	 * @throws SystemException if a system exception occurred
+	 */
+	public List<ArchiveContent> findAll(int start, int end,
+		OrderByComparator orderByComparator) throws SystemException {
+		Object[] finderArgs = new Object[] {
+				String.valueOf(start), String.valueOf(end),
+				String.valueOf(orderByComparator)
+			};
+
+		List<ArchiveContent> list = (List<ArchiveContent>)FinderCacheUtil.getResult(FINDER_PATH_FIND_ALL,
+				finderArgs, this);
+
+		if (list == null) {
+			StringBundler query = null;
+			String sql = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(2 +
+						(orderByComparator.getOrderByFields().length * 3));
+
+				query.append(_SQL_SELECT_ARCHIVECONTENT);
+
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+
+				sql = query.toString();
+			}
+			else {
+				sql = _SQL_SELECT_ARCHIVECONTENT.concat(ArchiveContentModelImpl.ORDER_BY_JPQL);
+			}
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				if (orderByComparator == null) {
+					list = (List<ArchiveContent>)QueryUtil.list(q,
+							getDialect(), start, end, false);
+
+					Collections.sort(list);
+				}
+				else {
+					list = (List<ArchiveContent>)QueryUtil.list(q,
+							getDialect(), start, end);
+				}
+			}
+			catch (Exception e) {
+				throw processException(e);
+			}
+			finally {
+				if (list == null) {
+					FinderCacheUtil.removeResult(FINDER_PATH_FIND_ALL,
+						finderArgs);
+				}
+				else {
+					cacheResult(list);
+
+					FinderCacheUtil.putResult(FINDER_PATH_FIND_ALL, finderArgs,
+						list);
+				}
+
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Removes all the archive contents from the database.
+	 *
+	 * @throws SystemException if a system exception occurred
+	 */
+	public void removeAll() throws SystemException {
+		for (ArchiveContent archiveContent : findAll()) {
+			remove(archiveContent);
+		}
+	}
+
+	/**
+	 * Counts all the archive contents.
+	 *
+	 * @return the number of archive contents
+	 * @throws SystemException if a system exception occurred
+	 */
+	public int countAll() throws SystemException {
+		Object[] finderArgs = new Object[0];
+
+		Long count = (Long)FinderCacheUtil.getResult(FINDER_PATH_COUNT_ALL,
+				finderArgs, this);
+
+		if (count == null) {
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(_SQL_COUNT_ARCHIVECONTENT);
+
+				count = (Long)q.uniqueResult();
+			}
+			catch (Exception e) {
+				throw processException(e);
+			}
+			finally {
+				if (count == null) {
+					count = Long.valueOf(0);
+				}
+
+				FinderCacheUtil.putResult(FINDER_PATH_COUNT_ALL, finderArgs,
+					count);
+
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	/**
+	 * Initializes the archive content persistence.
+	 */
+	public void afterPropertiesSet() {
+		String[] listenerClassNames = StringUtil.split(GetterUtil.getString(
+					com.liferay.util.service.ServiceProps.get(
+						"value.object.listener.com.ihg.me2.archive.service.model.ArchiveContent")));
+
+		if (listenerClassNames.length > 0) {
+			try {
+				List<ModelListener<ArchiveContent>> listenersList = new ArrayList<ModelListener<ArchiveContent>>();
+
+				for (String listenerClassName : listenerClassNames) {
+					listenersList.add((ModelListener<ArchiveContent>)InstanceFactory.newInstance(
+							listenerClassName));
+				}
+
+				listeners = listenersList.toArray(new ModelListener[listenersList.size()]);
+			}
+			catch (Exception e) {
+				_log.error(e);
+			}
+		}
+	}
+
+	public void destroy() {
+		EntityCacheUtil.removeCache(ArchiveContentImpl.class.getName());
+		FinderCacheUtil.removeCache(FINDER_CLASS_NAME_ENTITY);
+		FinderCacheUtil.removeCache(FINDER_CLASS_NAME_LIST);
+	}
+
+	@BeanReference(type = ArchiveContentPersistence.class)
+	protected ArchiveContentPersistence archiveContentPersistence;
+	@BeanReference(type = ResourcePersistence.class)
+	protected ResourcePersistence resourcePersistence;
+	@BeanReference(type = UserPersistence.class)
+	protected UserPersistence userPersistence;
+	private static final String _SQL_SELECT_ARCHIVECONTENT = "SELECT archiveContent FROM ArchiveContent archiveContent";
+	private static final String _SQL_COUNT_ARCHIVECONTENT = "SELECT COUNT(archiveContent) FROM ArchiveContent archiveContent";
+	private static final String _ORDER_BY_ENTITY_ALIAS = "archiveContent.";
+	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No ArchiveContent exists with the primary key ";
+	private static Log _log = LogFactoryUtil.getLog(ArchiveContentPersistenceImpl.class);
+}

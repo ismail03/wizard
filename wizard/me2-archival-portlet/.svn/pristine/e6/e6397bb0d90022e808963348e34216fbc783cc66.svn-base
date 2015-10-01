@@ -1,0 +1,274 @@
+package com.ihg.me2.archive.dao;
+
+import com.ihg.me2.archive.service.model.ArchiveContent;
+import com.ihg.me2.archive.service.service.ArchiveContentLocalServiceUtil;
+import com.ihg.me2.archive.util.ArchivalMonitorConstants;
+import com.ihg.me2.archive.util.ArchivalMonitorUtil;
+import com.liferay.portal.kernel.dao.orm.Criterion;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.BooleanClauseOccur;
+import com.liferay.portal.kernel.search.BooleanQuery;
+import com.liferay.portal.kernel.search.BooleanQueryFactoryUtil;
+import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.Query;
+import com.liferay.portal.kernel.search.SearchEngineUtil;
+import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.util.CalendarFactoryUtil;
+import com.liferay.portal.kernel.util.DateUtil;
+import com.liferay.portal.kernel.util.PropertiesParamUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.model.Group;
+import com.liferay.portal.service.GroupLocalServiceUtil;
+import com.liferay.portlet.documentlibrary.model.DLFileEntry;
+import com.liferay.portlet.documentlibrary.service.DLFileEntryLocalServiceUtil;
+import com.liferay.util.portlet.PortletProps;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.criteria.CriteriaQuery;
+
+public class ArchivalMonitorDAO {
+
+	private static final Log LOG = LogFactoryUtil.getLog(ArchivalMonitorDAO.class);
+	
+	private static void addLastMonitorSchedulerRun(ArchiveContent archiveContent)
+	{
+		System.out.println("ArchiveContentSearch.addLastMonitorSchedulerRun()");
+		String monitorSchedulerID = PortletProps.get(ArchivalMonitorConstants.PORTLET_MONITOR_SCHEDULER_ID);
+		System.out.println("monito Scheduler ID:-->"+monitorSchedulerID);
+		try {
+			 ArchiveContent archiveContent2 = ArchiveContentLocalServiceUtil.addArchiveContent(archiveContent);
+		} catch (SystemException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	private static Date isLastMonitorSchedulerRun(){
+		Date lastMonitorSchedulerRunDate = null;
+		try {
+			ArchiveContent archiveContents = ArchiveContentLocalServiceUtil.getArchiveContent(PortletProps.get(ArchivalMonitorConstants.PORTLET_MONITOR_SCHEDULER_ID));
+			if(null!=archiveContents)
+			{
+				lastMonitorSchedulerRunDate = archiveContents.getNotified_date();
+			}
+		} catch (PortalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SystemException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return lastMonitorSchedulerRunDate;
+	}
+	public static Query getMerlin() 
+	{
+		Query finalQuery = null;
+		try 
+		{
+			System.out.println("===================================================");
+			String COMPONENT_NEWSROOM = PortletProps.get(ArchivalMonitorConstants.PORTLET_COMPONENT_NEWSROOM);
+			String COMPONENT_APPLICATION = PortletProps.get(ArchivalMonitorConstants.PORTLET_COMPONENT_APPLICATIONS);
+			String COMPONENT_DEPARTMENT = PortletProps.get(ArchivalMonitorConstants.PORTLET_COMPONENT_DEPARTMENTS);
+			String COMPONENT_INITIATIVE = PortletProps.get(ArchivalMonitorConstants.PORTLET_COMPONENT_INITIATIVES);
+			String COMPONENT_CONFERENCE = PortletProps.get(ArchivalMonitorConstants.PORTLET_COMPONENT_CONFERENCES);
+			BooleanQuery compositeQuery = BooleanQueryFactoryUtil.create();
+			String className = Group.class.getName();
+			Date lastMonitorSchedulerRunDate = isLastMonitorSchedulerRun();
+			Date archivalCheckDate = null;
+			if(null!=lastMonitorSchedulerRunDate)
+			{
+				// Means scheduler is not running first time.
+			}
+			else
+			{
+				// scheduler is running first time.
+				archivalCheckDate = ArchivalMonitorUtil.getOneYearBeforeDate(null);
+			}
+			/*BooleanQuery dlQuery = BooleanQueryFactoryUtil.create();
+			dlQuery.addTerms(SearchConstants._KEYWORDS_FIELDS_FOR_DL, keywords);
+                        dlQuery.addExactTerm(Field.TITLE, keywords);
+                        dlQuery.addExactTerm(SearchConstants.RESOURCE_TITLE, keywords);
+                        dlQuery.addExactTerm(Field.DESCRIPTION, keywords);
+                        dlQuery.addExactTerm(Field.ASSET_TAG_NAMES, keywords);
+			if (keywords.split("\\s+").length > 1) 
+			{
+				String exactKeyword = "\"" + keywords + "\"";
+				dlQuery.addTerms(SearchConstants._KEYWORDS_FIELDS_FOR_DL_EXACT, exactKeyword);
+				dlQuery.addExactTerm(SearchConstants.RESOURCE_TITLE, exactKeyword+KEYWORD_BOOST_UP_VAL);
+			}*/
+		
+			System.out.println("this is newsroom compponents whether its on or not :-->"+COMPONENT_NEWSROOM);
+			BooleanQuery modelQuery = BooleanQueryFactoryUtil.create();
+			modelQuery.addRequiredTerm(Field.ENTRY_CLASS_NAME, className);
+			modelQuery.addRequiredTerm(Field.ASSET_TAG_NAMES, "merlin");
+			
+			Calendar fromDateCalendar = CalendarFactoryUtil.getCalendar();
+            fromDateCalendar.setTime(archivalCheckDate);
+			fromDateCalendar.add(Calendar.DATE, -6);
+			Date fromDate = fromDateCalendar.getTime();
+			
+			modelQuery.addRangeTerm("modifiedDate", fromDate.getTime(), archivalCheckDate.getTime());
+			
+			/*DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(Group.class);
+			Criterion criterion = null;
+			if(Validator.isNull(archivalCheckDate))
+				criterion = RestrictionsFactoryUtil.lt("modifiedDate", archivalCheckDate); 
+//				criterion = RestrictionsFactoryUtil.eq(Field.ENTRY_CLASS_NAME, className);
+				criterion = RestrictionsFactoryUtil.eq(Field.ASSET_TAG_NAMES, "merlin");
+			if(Validator.isNull(criterion))
+				dynamicQuery.add(criterion);
+			
+			System.out.println("========= using dynamic Query	===============");
+			List<Group> groups = GroupLocalServiceUtil.dynamicQuery(dynamicQuery);
+			for (Group group : groups) {
+				System.out.println("1) group details:->"+group.getName());
+			}
+			System.out.println("========= End using dynamic Query	===============");*/
+//			modelQuery.addRequiredTerm(Field.GROUP_ID, 10294);
+//			modelQuery.addRequiredTerm("classNameId", 10012);
+//			modelQuery.addRequiredTerm(Field.ASSET_TAG_NAMES, "merlin");
+			
+//			compositeQuery.add(dlQuery, BooleanClauseOccur.MUST);
+			compositeQuery.add(modelQuery, BooleanClauseOccur.MUST);
+			
+			System.out.println("compositeQuery:-->"+compositeQuery.toString());
+			Hits hits;
+			List<Document> docsList;
+			try {
+				hits = SearchEngineUtil.search(10132, compositeQuery, 0, 10);
+//				renderRequest.setAttribute(SearchConstants.TOTAL_COUNT, hits.getLength());
+//	            int totalPage =  hits.getLength()/SearchConstants.PER_PAGE;
+	            System.out.println("Total pages:-->"+hits.getLength());
+	            docsList = hits.toList();
+	            for (Document document : docsList) {
+	            	System.out.println("=====================	component wise searching =============");
+//	            	System.out.println("1)documents:->"+document.toString());
+					System.out.println("2)documents name:->"+document.getUID());
+					System.out.println("3)documents.get(title):->"+document.get("name"));
+					System.out.println("4) fetching modified:->"+document.get("modified"));
+					System.out.println("=====================	Ends of component Artical	=============");
+					if(document.get("name").equalsIgnoreCase(ArchivalMonitorConstants.PORTLET_COMPONENT_NEWSROOM))
+					{
+						getDocuments(document.get("groupId"));
+						BooleanQuery newsRoomDocumentQuery = BooleanQueryFactoryUtil.create();
+						newsRoomDocumentQuery.add(modelQuery, BooleanClauseOccur.MUST);
+						Hits newsroomDLHits = SearchEngineUtil.search(10132, newsRoomDocumentQuery, 0, 10);
+					}
+					/*Date dt = new Date(doc.get("modified"));
+					SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+			        String date = DATE_FORMAT.format(dt);
+			        System.out.println("modified date is :-->"+date);
+					Map<String, Field> fields = doc.getFields();*/
+//					fields.entrySet();
+				}
+			} catch (SearchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} 
+		catch (Exception e) 
+		{
+			LOG.error("getMerlin() Error making query for DL : " + e.getMessage(), e);
+			System.out.println("ArchiveContentSearch.getMerlin() Error making query for DL : " + e.getMessage());
+		}
+		
+		return finalQuery;
+	}
+	
+	public static Query getDocuments(String groupId) 
+	{
+		Query finalQuery = null;
+		try 
+		{
+			System.out.println("getDocuments:- ===================================================groupId:-->"+groupId);
+
+			BooleanQuery compositeQuery = BooleanQueryFactoryUtil.create();
+			String className = DLFileEntry.class.getName();
+			
+			/*BooleanQuery dlQuery = BooleanQueryFactoryUtil.create();
+			dlQuery.addTerms(SearchConstants._KEYWORDS_FIELDS_FOR_DL, keywords);
+                        dlQuery.addExactTerm(Field.TITLE, keywords);
+                        dlQuery.addExactTerm(SearchConstants.RESOURCE_TITLE, keywords);
+                        dlQuery.addExactTerm(Field.DESCRIPTION, keywords);
+                        dlQuery.addExactTerm(Field.ASSET_TAG_NAMES, keywords);
+			if (keywords.split("\\s+").length > 1) 
+			{
+				String exactKeyword = "\"" + keywords + "\"";
+				dlQuery.addTerms(SearchConstants._KEYWORDS_FIELDS_FOR_DL_EXACT, exactKeyword);
+				dlQuery.addExactTerm(SearchConstants.RESOURCE_TITLE, exactKeyword+KEYWORD_BOOST_UP_VAL);
+			}*/
+		
+			BooleanQuery modelQuery = BooleanQueryFactoryUtil.create();
+			modelQuery.addRequiredTerm(Field.ENTRY_CLASS_NAME, className);
+			modelQuery.addRequiredTerm(Field.GROUP_ID, groupId);
+			
+//			modelQuery.addRequiredTerm(Field.GROUP_ID, 10294);
+//			modelQuery.addRequiredTerm("classNameId", 10012);
+//			modelQuery.addRequiredTerm(Field.ASSET_TAG_NAMES, "merlin");
+			
+//			compositeQuery.add(dlQuery, BooleanClauseOccur.MUST);
+			compositeQuery.add(modelQuery, BooleanClauseOccur.MUST);
+			
+//			System.out.println("compositeQuery:-->"+compositeQuery.toString());
+			Hits hits;
+			try {
+				hits = SearchEngineUtil.search(10132, compositeQuery, 0, 10);
+//				renderRequest.setAttribute(SearchConstants.TOTAL_COUNT, hits.getLength());
+//	            int totalPage =  hits.getLength()/SearchConstants.PER_PAGE;
+	            System.out.println("Total pages:-->"+hits.getLength());
+	            Document[] docs = hits.getDocs();
+	            List<Document> docsList = hits.toList();
+	            System.out.println("docs.length:-->"+docs.length);
+	            for (Document document : docsList) {
+	            	System.out.println("=====================	component wise searching =============");
+//	            	System.out.println("1)documents:->"+document.toString());
+					System.out.println("2)documents name:->"+document.getUID());
+					System.out.println("3)documents.get(title):->"+document.get("title"));
+					/*for (String string : titles) {
+						System.out.println("3)documents.getValues(title):->"+string);						
+					}*/
+					System.out.println("4) fetching modified:->"+document.get("modified"));
+					System.out.println("=====================	Ends of component Artical	=============");
+					/*Date dt = new Date(doc.get("modified"));
+					SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy");
+			        String date = DATE_FORMAT.format(dt);
+			        System.out.println("modified date is :-->"+date);
+					Map<String, Field> fields = doc.getFields();*/
+//					fields.entrySet();
+				}
+	            /*for (Document doc : docs) {
+					System.out.println("1)documents:->"+doc.toString());
+					System.out.println("2)documents name:->"+doc.getUID());
+					String[] titles = doc.getValues("title");
+					System.out.println("3)documents.get(title):->"+doc.get("title"));
+					for (String string : titles) {
+						System.out.println("3)documents.getValues(title):->"+string);						
+					}
+					System.out.println("4) fetching modified:->"+doc.get("modified"));
+					
+				}*/
+			} catch (SearchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} 
+		catch (Exception e) 
+		{
+			LOG.error("getMerlin() Error making query for DL : " + e.getMessage(), e);
+			System.out.println("ArchiveContentSearch.getMerlin() Error making query for DL : " + e.getMessage());
+		}
+		
+		return finalQuery;
+	}
+}
